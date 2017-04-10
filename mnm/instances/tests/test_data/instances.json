@@ -1,0 +1,22 @@
+[
+    {
+        "name":"mastodon.social",
+        "up":true,
+        "https_score":81,
+        "https_rank":"A",
+        "ipv6":false,
+        "openRegistrations":true,
+        "users":330,
+        "statuses":1132540,
+        "connections":827},
+    {
+        "name":"mastodon.xyz",
+        "up":false,
+        "https_score":96,
+        "https_rank":"A+",
+        "ipv6":false,
+        "openRegistrations":false,
+        "users":5627,
+        "statuses":64678,
+        "connections":521}
+]

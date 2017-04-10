@@ -28,6 +28,15 @@ services:
     ports:
       - "8000:8000"
 
-
-
-
+  worker:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    command: python manage.py worker
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_USER=mnm
+      - USE_DOCKER=yes
+    volumes:
+      - .:/app

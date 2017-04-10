@@ -1,63 +1,46 @@
-import lxml.html
 import requests
+import json
+from django.utils import timezone
 
 from . import models
 
 
 def parser_instances_xyz():
-    url = 'https://instances.mastodon.xyz'
+    url = 'https://instances.mastodon.xyz/instances.json'
     response = requests.get(url)
     response.raise_for_status()
-    root = lxml.html.fromstring(response.content.decode('utf-8'))
-    rows = root.xpath('//tbody/tr')
+    payload = json.loads(response.content.decode('utf-8'))
+    now = timezone.now()
     results = {
-        'instances': []
+        'instances': [],
+        'fetched_on': now,
     }
-    for row in rows:
-        d = {}
-        cells = row.xpath('td')
-        up, url, users, registrations = (
-            cells[0],
-            cells[1],
-            cells[2],
-            cells[3],
-        )
-        d['up'] = up.text.lower() == 'up'
-        d['url'] = url.findall('.//a')[0].attrib['href']
-        d['users'] = int(users.text)
-        d['open_registration'] = registrations.text.lower() == 'yes'
+    for row in payload:
+        print(row)
+        d = {
+            'name': row['name'],
+            'up': row['up'],
+            'https_score': row['https_score'],
+            'https_rank': row['https_rank'],
+            'ipv6': row['ipv6'],
+            'open_registrations': row.get('openRegistrations'),
+            'users': row.get('users'),
+            'statuses': row.get('statuses'),
+            'connections': row.get('connections'),
+            'fetched_on': now,
+        }
         results['instances'].append(d)
-
     return results
 
 
 def import_results(results):
     instances = []
     for row in results:
+        row['last_fetched'] = row.pop('fetched_on')
         i, _ = models.Instance.objects.update_or_create(
-            url=row['url'],
+            name=row['name'],
             defaults=row,
         )
         instances.append(i)
 
     return instances
-
-
-def fetch_instance_data(url):
-    response = requests.get(url)
-    response.raise_for_status()
-
-    root = lxml.html.fromstring(response.content.decode('utf-8'))
-    informations = root.xpath("//div[@class='information-board']/div/strong")
-    users, statuses, connections = (
-        informations[0],
-        informations[1],
-        informations[2],
-    )
-    results = {
-        'users': int(users.text),
-        'statuses': int(statuses.text),
-        'connections': int(connections.text),
-    }
-
-    return results
