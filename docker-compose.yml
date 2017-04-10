@@ -55,7 +55,7 @@ services:
       - django
 
     ports:
-      - "0.0.0.0:80:80"
+      - "9063:80"
 
   redis:
     restart: always
