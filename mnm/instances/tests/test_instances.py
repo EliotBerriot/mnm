@@ -112,3 +112,77 @@ class TestInstances(TestCase):
         for i, instance in enumerate(instances):
             for key, value in expected[i].items():
                 self.assertEqual(getattr(instance, key), value)
+
+    def test_can_serialize_instnce_to_influxdb(self):
+        now = timezone.now()
+        existing = models.Instance.objects.create(
+            name='mastodon.social',
+            up=True,
+            https_score=81,
+            https_rank="A",
+            ipv6=False,
+            open_registrations=True,
+            users=330,
+            statuses=1132540,
+            last_fetched=now,
+            connections=827
+        )
+
+        data = existing.to_influxdb()
+        expected = {
+            'measurement': 'instances',
+            'time': now.isoformat(),
+            'fields': {
+                'https_score': 81,
+                'users': 330,
+                'statuses': 1132540,
+                'connections': 827,
+            },
+            'tags': {
+                'name': 'mastodon.social',
+                'ipv6': False,
+                'https_rank': 'A',
+                'up': True,
+                'open_registrations': True,
+            },
+        }
+        self.assertEqual(data, expected)
+
+    @unittest.mock.patch('mnm.instances.influxdb_client.push')
+    def test_can_send_data_to_influxdb(self, m):
+        now = timezone.now()
+        existing = models.Instance.objects.create(
+            name='mastodon.social',
+            up=True,
+            https_score=81,
+            https_rank="A",
+            ipv6=False,
+            open_registrations=True,
+            users=330,
+            statuses=1132540,
+            last_fetched=now,
+            connections=827
+        )
+
+        expected = {
+            'measurement': 'instances',
+            'time': now.isoformat(),
+            'fields': {
+                'https_score': 81,
+                'users': 330,
+                'statuses': 1132540,
+                'connections': 827,
+                '_quantity': 1,
+            },
+            'tags': {
+                'name': 'mastodon.social',
+                'ipv6': False,
+                'https_rank': 'A',
+                'up': True,
+                'open_registrations': True,
+            },
+        }
+
+        existing.push_to_influxdb()
+
+        m.assert_called_once_with([expected])

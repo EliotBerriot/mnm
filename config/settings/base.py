@@ -275,3 +275,6 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+INFLUXDB_URL = env("INFLUXDB_URL", default=None)
+INFLUXDB_UDP_PORT = env.int("INFLUXDB_UDP_PORT", default=None)
