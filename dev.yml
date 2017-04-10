@@ -53,5 +53,6 @@ services:
       - POSTGRES_USER=mnm
       - USE_DOCKER=yes
       - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
+      - FETCH_DELAY=10
     volumes:
       - .:/app

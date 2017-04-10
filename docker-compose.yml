@@ -6,13 +6,26 @@ volumes:
 
 services:
   postgres:
+    restart: always
     build: ./compose/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
     env_file: .env
 
+  influxdb:
+    restart: always
+    image: influxdb:1.2
+
+  grafana:
+    restart: always
+    image: grafana/grafana
+    env_file: .env
+    ports:
+      - "3000:3000"
+
   django:
+    restart: always
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
@@ -23,7 +36,20 @@ services:
     command: /gunicorn.sh
     env_file: .env
 
+  worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    user: django
+    depends_on:
+      - postgres
+      - redis
+    command: python manage.py worker
+    env_file: .env
+
   nginx:
+    restart: always
     build: ./compose/nginx
     depends_on:
       - django
@@ -31,7 +57,6 @@ services:
     ports:
       - "0.0.0.0:80:80"
 
-
   redis:
+    restart: always
     image: redis:latest
-
