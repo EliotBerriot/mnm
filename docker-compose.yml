@@ -6,7 +6,7 @@ volumes:
 
 services:
   postgres:
-    restart: always
+    restart: unless-stopped
     build: ./compose/postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -14,11 +14,11 @@ services:
     env_file: .env
 
   influxdb:
-    restart: always
+    restart: unless-stopped
     image: influxdb:1.2
 
   grafana:
-    restart: always
+    restart: unless-stopped
     image: grafana/grafana
     env_file: .env
     ports:
@@ -27,7 +27,7 @@ services:
       - ./compose/grafana/grafana.ini:/etc/grafana/grafana.ini
 
   django:
-    restart: always
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
@@ -39,7 +39,7 @@ services:
     env_file: .env
 
   worker:
-    restart: always
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
@@ -51,7 +51,7 @@ services:
     env_file: .env
 
   nginx:
-    restart: always
+    restart: unless-stopped
     build: ./compose/nginx
     depends_on:
       - django
@@ -60,5 +60,5 @@ services:
       - "9063:80"
 
   redis:
-    restart: always
+    restart: unless-stopped
     image: redis:latest
