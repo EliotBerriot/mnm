@@ -23,6 +23,8 @@ services:
     env_file: .env
     ports:
       - "3000:3000"
+    volumes:
+      - ./compose/grafana/grafana.ini:/etc/grafana/grafana.ini
 
   django:
     restart: always
