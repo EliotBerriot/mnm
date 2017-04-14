@@ -27,6 +27,7 @@ services:
     environment:
       - "GF_SERVER_ROOT_URL=https://localhost:3000"
       - "GF_SECURITY_ADMIN_PASSWORD=secret"
+      - "GF_INSTALL_PLUGINS=grafana-piechart-panel,vonage-status-panel,grafana-worldmap-panel"
 
   django:
     build:

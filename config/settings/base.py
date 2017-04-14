@@ -279,3 +279,5 @@ ADMIN_URL = r'^admin/'
 INFLUXDB_URL = env("INFLUXDB_URL", default=None)
 INFLUXDB_UDP_PORT = env.int("INFLUXDB_UDP_PORT", default=None)
 FETCH_DELAY = env.int('FETCH_DELAY', default=300)
+FETCH_COUNTRY_DELAY = env.int('FETCH_COUNTRY_DELAY', default=300)
+REFRESH_COUNTRY_DELAY = env.int('REFRESH_COUNTRY_DELAY', default=3000)

@@ -1,5 +1,6 @@
 from django.utils import timezone
 import itertools
+import requests
 
 from . import parsers
 from . import models
@@ -26,3 +27,17 @@ def fetch_instances():
         data.append(instance.to_influxdb())
     for group in grouper(50, data):
         influxdb_client.push(list(group))
+
+
+def fetch_instances_countries(maximum=10, empty=True):
+    qs = models.Instance.objects.filter(country_code__isnull=empty)
+
+    for instance in qs.order_by('?')[:maximum]:
+        print('Fetching geo data for {}...'.format(instance.name))
+        try:
+            data = parsers.fetch_country(instance.name)
+        except requests.HTTPError:
+            continue
+
+        instance.import_geoip_data(data)
+        instance.save()

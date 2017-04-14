@@ -14,6 +14,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         schedule.every(settings.FETCH_DELAY).seconds.do(tasks.fetch_instances)
+        schedule.every(settings.FETCH_COUNTRY_DELAY).seconds.do(
+            lambda: tasks.fetch_instances_countries(empty=True, maximum=10)
+        )
+        schedule.every(settings.REFRESH_COUNTRY_DELAY).seconds.do(
+            lambda: tasks.fetch_instances_countries(empty=False, maximum=10)
+        )
 
         self.stdout.write(self.style.SUCCESS('Starting job runner...'))
         while True:

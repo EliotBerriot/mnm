@@ -1,3 +1,5 @@
+import geohash
+
 from django.db import models
 
 from . import influxdb_client
@@ -17,12 +19,30 @@ class Instance(models.Model):
     https_score = models.PositiveIntegerField(null=True, blank=True)
     https_rank = models.CharField(null=True, blank=True, max_length=10)
 
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    country_code = models.CharField(null=True, blank=True, max_length=5)
+    region_code = models.CharField(null=True, blank=True, max_length=5)
+
     @property
     def url(self):
         return 'https://{}'.format(self.name)
 
+    @property
+    def geohash(self):
+        if not self.latitude or not self.longitude:
+            return
+
+        return geohash.encode(self.latitude, self.longitude, precision=3)
+
     def push_to_influxdb(self):
         return influxdb_client.push([self.to_influxdb()])
+
+    def import_geoip_data(self, data):
+        self.latitude = data['latitude']
+        self.longitude = data['longitude']
+        self.country_code = data['country_code']
+        self.region_code = data['region_code']
 
     def to_influxdb(self, time=None):
         if not time:
@@ -39,6 +59,9 @@ class Instance(models.Model):
                 'https_rank': self.https_rank,
                 'ipv6': self.ipv6,
                 'name': self.name,
+                'country_code': self.country_code,
+                'region_code': self.region_code,
+                'geohash': self.geohash,
             },
             "fields": {
                 '_quantity': 1,

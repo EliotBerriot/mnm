@@ -133,17 +133,21 @@ class TestInstances(TestCase):
             'measurement': 'instances',
             'time': now.isoformat(),
             'fields': {
+                '_quantity': 1,
                 'https_score': 81,
                 'users': 330,
                 'statuses': 1132540,
                 'connections': 827,
             },
             'tags': {
+                'geohash': None,
                 'name': 'mastodon.social',
                 'ipv6': False,
                 'https_rank': 'A',
                 'up': True,
                 'open_registrations': True,
+                'country_code': None,
+                'region_code': None,
             },
         }
         self.assertEqual(data, expected)
@@ -159,6 +163,8 @@ class TestInstances(TestCase):
             ipv6=False,
             open_registrations=True,
             users=330,
+            country_code='FR',
+            region_code='PA',
             statuses=1132540,
             last_fetched=now,
             connections=827
@@ -175,6 +181,9 @@ class TestInstances(TestCase):
                 '_quantity': 1,
             },
             'tags': {
+                'geohash': None,
+                'country_code': 'FR',
+                'region_code': 'PA',
                 'name': 'mastodon.social',
                 'ipv6': False,
                 'https_rank': 'A',
@@ -186,3 +195,29 @@ class TestInstances(TestCase):
         existing.push_to_influxdb()
 
         m.assert_called_once_with([expected])
+
+    @requests_mock.mock()
+    def test_can_fetch_instance_country(self, m):
+        html = os.path.join(DATA_DIR, 'freegeoip.json')
+        with open(html) as f:
+            content = f.read()
+
+        hostname = 'mastodon.xyz'
+        url = 'https://freegeoip.net/json/{}'.format(hostname)
+        m.get(url, text=content)
+
+        results = parsers.fetch_country('mastodon.xyz')
+        self.assertEqual(results['country_code'], 'FR')
+        self.assertEqual(results['country_name'], 'France')
+        self.assertEqual(results['time_zone'], 'Europe/Paris')
+        self.assertEqual(results['latitude'], 48.8582)
+        self.assertEqual(results['longitude'], 2.3387)
+
+    def test_can_get_instance_geohash(self):
+        instance = models.Instance.objects.create(
+            name='mastodon.social',
+            latitude=40.6888,
+            longitude=-74.0204,
+        )
+
+        self.assertEqual(instance.geohash, 'dr5r7')
