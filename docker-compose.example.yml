@@ -9,13 +9,15 @@ services:
     restart: unless-stopped
     build: ./compose/postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres/database:/var/lib/postgresql/data
       - postgres_backup:/backups
     env_file: .env
 
   influxdb:
     restart: unless-stopped
     image: influxdb:1.2
+    volumes:
+        - ./data/influxdb:/var/lib/influxdb
 
   grafana:
     restart: unless-stopped
@@ -24,6 +26,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ./data/grafana/lib:/var/lib/grafana
       - ./compose/grafana/grafana.ini:/etc/grafana/grafana.ini
 
   django:
