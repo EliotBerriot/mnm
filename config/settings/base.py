@@ -296,7 +296,7 @@ CELERYBEAT_SCHEDULE = {
     # crontab(hour=0, minute=0, day_of_week='saturday')
     'fetch_instances_5m': {
         'task': 'mnm.instances.tasks.fetch_instances',
-        'schedule': crontab(minute='*/1'),
+        'schedule': crontab(minute='*/5'),
         'args': ('instances',)
     },
     'fetch_instances_1h': {
