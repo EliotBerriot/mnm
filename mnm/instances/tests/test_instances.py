@@ -220,4 +220,4 @@ class TestInstances(TestCase):
             longitude=-74.0204,
         )
 
-        self.assertEqual(instance.geohash, 'dr5r7')
+        self.assertEqual(instance.geohash, 'dr5')

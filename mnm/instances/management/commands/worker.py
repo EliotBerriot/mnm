@@ -16,6 +16,9 @@ class Command(BaseCommand):
         schedule.every(1).hour.do(
             lambda: tasks.fetch_instances('instances_hourly')
         )
+        schedule.every().day.at('00:00').do(
+            lambda: tasks.fetch_instances('instances_daily')
+        )
         schedule.every(settings.FETCH_DELAY).seconds.do(
             lambda: tasks.fetch_instances('instances')
         )
