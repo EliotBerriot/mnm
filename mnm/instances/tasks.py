@@ -1,6 +1,7 @@
 from django.utils import timezone
 import itertools
 import requests
+from mnm.taskapp import celery
 
 from . import parsers
 from . import models
@@ -18,7 +19,8 @@ def grouper(n, iterable):
         yield itertools.chain((first_el,), chunk_it)
 
 
-def fetch_instances(table):
+@celery.app.task(bind=True)
+def fetch_instances(self, table):
     results = parsers.parser_instances_xyz()
     parsers.import_results(results['instances'])
 
@@ -29,7 +31,8 @@ def fetch_instances(table):
         influxdb_client.push(list(group))
 
 
-def fetch_instances_countries(maximum=10, empty=True):
+@celery.app.task(bind=True)
+def fetch_instances_countries(self, maximum=10, empty=True):
     qs = models.Instance.objects.filter(country_code__isnull=empty)
 
     for instance in qs.order_by('?')[:maximum]:

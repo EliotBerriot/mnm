@@ -48,7 +48,7 @@ redis>=2.10.5
 
 
 # Your custom requirements go here
-schedule
+celery==4.0.2
 requests
 influxdb
 python-geohash

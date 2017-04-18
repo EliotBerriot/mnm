@@ -5,6 +5,9 @@ volumes:
   postgres_backup_dev: {}
 
 services:
+  redis:
+    image: redis
+
   postgres:
     build: ./compose/postgres
     volumes:
@@ -45,17 +48,33 @@ services:
     ports:
       - "8000:8000"
 
-  worker:
+  celeryworker:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile-dev
-    command: python manage.py worker
+    volumes:
+        - .:/app
     depends_on:
-      - postgres
+     - postgres
+     - redis
+    command: celery -A mnm.taskapp worker -l INFO
     environment:
       - POSTGRES_USER=mnm
       - USE_DOCKER=yes
       - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
-      - FETCH_DELAY=10
+
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
     volumes:
-      - .:/app
+        - .:/app
+    depends_on:
+      - postgres
+      - redis
+    command: celery -A mnm.taskapp beat -l INFO
+    environment:
+      - POSTGRES_USER=mnm
+      - USE_DOCKER=yes
+      - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test

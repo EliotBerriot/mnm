@@ -9,7 +9,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
 from __future__ import absolute_import, unicode_literals
-
+from celery.schedules import crontab
 import environ
 
 ROOT_DIR = environ.Path(__file__) - 3  # (mnm/config/settings/base.py - 3 = mnm/)
@@ -273,6 +273,15 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
 
+
+INSTALLED_APPS += ['mnm.taskapp.celery.CeleryConfig']
+BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+if BROKER_URL == 'django://':
+    CELERY_RESULT_BACKEND = 'redis://'
+else:
+    CELERY_RESULT_BACKEND = BROKER_URL
+
+
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
 
@@ -281,3 +290,39 @@ INFLUXDB_UDP_PORT = env.int("INFLUXDB_UDP_PORT", default=None)
 FETCH_DELAY = env.int('FETCH_DELAY', default=300)
 FETCH_COUNTRY_DELAY = env.int('FETCH_COUNTRY_DELAY', default=300)
 REFRESH_COUNTRY_DELAY = env.int('REFRESH_COUNTRY_DELAY', default=3000)
+
+
+CELERYBEAT_SCHEDULE = {
+    # crontab(hour=0, minute=0, day_of_week='saturday')
+    'fetch_instances_5m': {
+        'task': 'mnm.instances.tasks.fetch_instances',
+        'schedule': crontab(minute='*/1'),
+        'args': ('instances',)
+    },
+    'fetch_instances_1h': {
+        'task': 'mnm.instances.tasks.fetch_instances',
+        'schedule': crontab(minute=0, hour='*'),
+        'args': ('instances_hourly',)
+    },
+    'fetch_instances_1d': {
+        'task': 'mnm.instances.tasks.fetch_instances',
+        'schedule': crontab(minute=0, hour=0),
+        'args': ('instances_daily',)
+    },
+    'fetch_instances_countries_empty': {
+        'task': 'mnm.instances.tasks.fetch_instances_countries',
+        'schedule': crontab(minute='*/5'),
+        'kwargs': {
+            'empty': True,
+            'maximum': 10,
+        }
+    },
+    'refresh_isntances_country': {
+        'task': 'mnm.instances.tasks.fetch_instances_countries',
+        'schedule': crontab(minute=0),
+        'kwargs': {
+            'empty': False,
+            'maximum': 10,
+        }
+    },
+}

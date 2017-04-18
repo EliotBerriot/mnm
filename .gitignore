@@ -61,6 +61,6 @@ node_modules/
 # User-uploaded media
 mnm/media/
 
-
+celerybeat-schedule.db
 
 staticfiles/

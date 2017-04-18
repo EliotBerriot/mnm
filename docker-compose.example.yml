@@ -5,10 +5,15 @@ volumes:
   postgres_backup: {}
 
 services:
+  redis:
+    restart: unless-stopped
+    image: redis
+
   postgres:
     restart: unless-stopped
     build: ./compose/postgres
     volumes:
+      - postgres_data:/var/lib/postgresql/data
       - ./data/postgres/database:/var/lib/postgresql/data
       - postgres_backup:/backups
     env_file: .env
@@ -41,17 +46,29 @@ services:
     command: /gunicorn.sh
     env_file: .env
 
-  worker:
+  celeryworker:
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
     user: django
+    env_file: .env
+    depends_on:
+     - postgres
+     - redis
+    command: celery -A mnm.taskapp worker -l INFO
+
+  celerybeat:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    user: django
+    env_file: .env
     depends_on:
       - postgres
       - redis
-    command: python manage.py worker
-    env_file: .env
+    command: celery -A mnm.taskapp beat -l INFO
 
   nginx:
     restart: unless-stopped
