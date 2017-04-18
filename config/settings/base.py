@@ -59,6 +59,7 @@ LOCAL_APPS = [
     # custom users app
     'mnm.users.apps.UsersConfig',
     'mnm.instances',
+    'mnm.statuses',
     # Your stuff: custom apps go here
 ]
 
@@ -325,4 +326,11 @@ CELERYBEAT_SCHEDULE = {
             'maximum': 10,
         }
     },
+}
+
+STATUSES_RECORD = {
+    'client_id': env('STATUSES_RECORD_CLIENT_ID', default=''),
+    'client_secret': env('STATUSES_RECORD_CLIENT_SECRET', default=''),
+    'access_token': env('STATUSES_RECORD_ACCESS_TOKEN', default=''),
+    'api_base_url': env('STATUSES_RECORD_URL', default=''),
 }

@@ -37,6 +37,7 @@ services:
       context: .
       dockerfile: ./compose/django/Dockerfile-dev
     command: /start-dev.sh
+    env_file: .env
     depends_on:
       - postgres
     environment:
@@ -58,6 +59,7 @@ services:
      - postgres
      - redis
     command: celery -A mnm.taskapp worker -l INFO
+    env_file: .env
     environment:
       - POSTGRES_USER=mnm
       - USE_DOCKER=yes
@@ -68,6 +70,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile-dev
+    env_file: .env
     volumes:
         - .:/app
     depends_on:
