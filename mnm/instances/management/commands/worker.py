@@ -13,7 +13,12 @@ class Command(BaseCommand):
     help = 'Fetch instance data regularly'
 
     def handle(self, *args, **options):
-        schedule.every(settings.FETCH_DELAY).seconds.do(tasks.fetch_instances)
+        schedule.every(1).hour.do(
+            lambda: tasks.fetch_instances('instances_hourly')
+        )
+        schedule.every(settings.FETCH_DELAY).seconds.do(
+            lambda: tasks.fetch_instances('instances')
+        )
         schedule.every(settings.FETCH_COUNTRY_DELAY).seconds.do(
             lambda: tasks.fetch_instances_countries(empty=True, maximum=10)
         )

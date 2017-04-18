@@ -18,13 +18,13 @@ def grouper(n, iterable):
         yield itertools.chain((first_el,), chunk_it)
 
 
-def fetch_instances():
+def fetch_instances(table):
     results = parsers.parser_instances_xyz()
     parsers.import_results(results['instances'])
 
     data = []
     for instance in models.Instance.objects.all():
-        data.append(instance.to_influxdb())
+        data.append(instance.to_influxdb(table=table))
     for group in grouper(50, data):
         influxdb_client.push(list(group))
 

@@ -52,3 +52,4 @@ schedule
 requests
 influxdb
 python-geohash
+ipython

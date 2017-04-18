@@ -44,14 +44,14 @@ class Instance(models.Model):
         self.country_code = data['country_code']
         self.region_code = data['region_code']
 
-    def to_influxdb(self, time=None):
+    def to_influxdb(self, table='instances', time=None):
         if not time:
             try:
                 time = self.last_fetched
             except AttributeError:
                 time = timezone.now()
         return {
-            "measurement": "instances",
+            "measurement": table,
             "time": time.isoformat(),
             "tags": {
                 'open_registrations': self.open_registrations,
