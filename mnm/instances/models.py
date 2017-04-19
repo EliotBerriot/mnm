@@ -24,6 +24,10 @@ class Instance(models.Model):
     country_code = models.CharField(null=True, blank=True, max_length=5)
     region_code = models.CharField(null=True, blank=True, max_length=5)
 
+    # it's sad, but some instances start reporting fake numbers,
+    # see https://github.com/EliotBerriot/mnm/issues/8
+    is_blocked = models.BooleanField(default=False)
+
     @property
     def url(self):
         return 'https://{}'.format(self.name)
