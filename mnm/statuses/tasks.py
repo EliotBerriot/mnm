@@ -29,7 +29,9 @@ def send_to_influxdb(self, data):
     p['tags']['is_reply'] = data['in_reply_to_account_id'] is not None
     p['tags']['is_reblog'] = data['reblog'] is not None
     p['tags']['is_sensitive'] = data['sensitive']
-    p['tags']['instance'] = data['account']['acct'].split('@')[-1]
+
+    instance = data['uri'].split(',')[0].split(':')[1]
+    p['tags']['instance'] = instance
     try:
         instance = Instance.objects.get(name=p['tags']['instance'])
         p['tags']['instance_country_code'] = instance.country_code

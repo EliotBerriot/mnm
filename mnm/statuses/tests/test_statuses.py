@@ -62,7 +62,7 @@ class TestStatus(TestCase):
             'measurement': 'statuses',
             'time': '2017-04-18T19:04:12.000Z',
             'fields': {
-                'quantity': 1,
+                '_quantity': 1,
                 'mentions_count': 0,
                 'tags_count': 3,
                 'tags': 'mastochef,photo,test',
