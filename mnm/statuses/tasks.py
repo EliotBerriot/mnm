@@ -45,6 +45,8 @@ def send_to_influxdb(self, data):
     points = [p]
 
     for t in p['fields']['tags'].split(','):
+        if not t:
+            continue
         d = {
             'measurement': 'hashtags',
             'time': data['created_at'],
