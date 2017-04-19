@@ -1,8 +1,8 @@
 import unittest
 from test_plus.test import TestCase
 from django.utils.html import strip_tags
-from mnm.statuses import tasks
 
+from mnm.statuses import tasks, language
 from mnm.instances.models import Instance
 
 
@@ -82,6 +82,7 @@ class TestStatus(TestCase):
                     'visibility': "public",
                     'has_images': True,
                     'has_links': True,
+                    'language': 'fr',
                 }
             },
             {
@@ -93,6 +94,8 @@ class TestStatus(TestCase):
                 'tags': {
                     'name': "mastochef",
                     'instance_country_code': 'FR',
+                    'language': 'fr',
+                    'instance': 'oc.todon.fr',
                 }
             },
             {
@@ -104,6 +107,8 @@ class TestStatus(TestCase):
                 'tags': {
                     'name': "photo",
                     'instance_country_code': 'FR',
+                    'language': 'fr',
+                    'instance': 'oc.todon.fr',
                 }
             },
             {
@@ -115,6 +120,8 @@ class TestStatus(TestCase):
                 'tags': {
                     'name': "test",
                     'instance_country_code': 'FR',
+                    'language': 'fr',
+                    'instance': 'oc.todon.fr',
                 }
             },
 
@@ -122,3 +129,9 @@ class TestStatus(TestCase):
         with unittest.mock.patch('mnm.instances.influxdb_client.push') as m:
             r = tasks.send_to_influxdb(data)
             m.assert_called_once_with(expected)
+
+    def test_can_detect_language(self):
+        r = language.guess('Partage photo du soir : Un joli portrait en noir et blanc ~ Photographe : Dominique Weisrock  https://oc.todon.fr/media/8WuCAB17ozgIB6BX6vU')
+
+        self.assertEqual(r, 'fr')
+        self.assertEqual(language.guess('tooshort'), 'UNKNOWN')

@@ -3,6 +3,8 @@ from django.utils.html import strip_tags
 from mnm.instances import influxdb_client
 from mnm.instances.models import Instance
 
+from . import language
+
 
 @celery.app.task(bind=True)
 def send_to_influxdb(self, data):
@@ -25,10 +27,12 @@ def send_to_influxdb(self, data):
     p['fields']['images_count'] = len(
         [a for a in data['media_attachments'] if a['type'] == 'image'])
     p['fields']['links_count'] = data['content'].count('<a href=')
-    p['fields']['content_length'] = len(strip_tags(data['content']))
+    content = strip_tags(data['content'])
+    p['fields']['content_length'] = len(content)
     p['tags']['is_reply'] = data['in_reply_to_account_id'] is not None
     p['tags']['is_reblog'] = data['reblog'] is not None
     p['tags']['is_sensitive'] = data['sensitive']
+    p['tags']['language'] = language.guess(content)
 
     instance = data['uri'].split(',')[0].split(':')[1]
     p['tags']['instance'] = instance
@@ -55,6 +59,8 @@ def send_to_influxdb(self, data):
             },
             'tags': {
                 'name': t,
+                'instance': p['tags']['instance'],
+                'language': p['tags']['language'],
                 'instance_country_code': p['tags'].get('instance_country_code')
             }
         }
