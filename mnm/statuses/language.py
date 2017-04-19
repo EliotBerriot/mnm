@@ -7,4 +7,4 @@ def guess(string):
         return 'UNKNOWN'
 
     r = langdetect.detect_langs(string)[0]
-    return r.lang if r.prob >= 0.75 else 'UNKNWOWN'
+    return r.lang if r.prob >= 0.75 else 'UNKNOWN'
