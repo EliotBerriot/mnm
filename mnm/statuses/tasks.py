@@ -52,7 +52,8 @@ def send_to_influxdb(self, data):
                 '_quantity': 1,
             },
             'tags': {
-                'name': t
+                'name': t,
+                'instance_country_code': p['tags'].get('instance_country_code')
             }
         }
         points.append(d)

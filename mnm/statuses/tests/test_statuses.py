@@ -92,6 +92,7 @@ class TestStatus(TestCase):
                 },
                 'tags': {
                     'name': "mastochef",
+                    'instance_country_code': 'FR',
                 }
             },
             {
@@ -102,6 +103,7 @@ class TestStatus(TestCase):
                 },
                 'tags': {
                     'name': "photo",
+                    'instance_country_code': 'FR',
                 }
             },
             {
@@ -112,6 +114,7 @@ class TestStatus(TestCase):
                 },
                 'tags': {
                     'name': "test",
+                    'instance_country_code': 'FR',
                 }
             },
 
