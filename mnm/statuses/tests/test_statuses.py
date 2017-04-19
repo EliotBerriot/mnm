@@ -58,31 +58,64 @@ class TestStatus(TestCase):
             'content': '<p>Partage photo du soir : Un joli portrait en noir et blanc ~ <br>Photographe : Dominique Weisrock</p><p><a href="https://oc.todon.fr/media/8WuCAB17ozgIB6BX6vU" rel="nofollow noopener"><span class="invisible">https://</span><span class="ellipsis">oc.todon.fr/media/8WuCAB17ozgI</span><span class="invisible">B6BX6vU</span></a></p>',
             'uri': 'tag:oc.todon.fr,2017-04-18:objectId=424018:objectType=Status', 'spoiler_text': ''}
 
-        expected = {
-            'measurement': 'statuses',
-            'time': '2017-04-18T19:04:12.000Z',
-            'fields': {
-                '_quantity': 1,
-                'mentions_count': 0,
-                'tags_count': 3,
-                'tags': 'mastochef,photo,test',
-                'media_count': 1,
-                'images_count': 1,
-                'links_count': 1,
-                'content_length': len(strip_tags(data['content']))
+        expected = [
+            {
+                'measurement': 'statuses',
+                'time': '2017-04-18T19:04:12.000Z',
+                'fields': {
+                    '_quantity': 1,
+                    'mentions_count': 0,
+                    'tags_count': 3,
+                    'tags': 'mastochef,photo,test',
+                    'media_count': 1,
+                    'images_count': 1,
+                    'links_count': 1,
+                    'content_length': len(strip_tags(data['content']))
+                },
+                'tags': {
+                    'is_reply': False,
+                    'is_reblog': False,
+                    'is_sensitive': True,
+                    'instance': "oc.todon.fr",
+                    'instance_country_code': "FR",
+                    'application': "web",
+                    'visibility': "public",
+                    'has_images': True,
+                    'has_links': True,
+                }
             },
-            'tags': {
-                'is_reply': False,
-                'is_reblog': False,
-                'is_sensitive': True,
-                'instance': "oc.todon.fr",
-                'instance_country_code': "FR",
-                'application': "web",
-                'visibility': "public",
-                'has_images': True,
-                'has_links': True,
-            }
-        }
+            {
+                'measurement': 'hashtags',
+                'time': '2017-04-18T19:04:12.000Z',
+                'fields': {
+                    '_quantity': 1,
+                },
+                'tags': {
+                    'name': "mastochef",
+                }
+            },
+            {
+                'measurement': 'hashtags',
+                'time': '2017-04-18T19:04:12.000Z',
+                'fields': {
+                    '_quantity': 1,
+                },
+                'tags': {
+                    'name': "photo",
+                }
+            },
+            {
+                'measurement': 'hashtags',
+                'time': '2017-04-18T19:04:12.000Z',
+                'fields': {
+                    '_quantity': 1,
+                },
+                'tags': {
+                    'name': "test",
+                }
+            },
+
+        ]
         with unittest.mock.patch('mnm.instances.influxdb_client.push') as m:
             r = tasks.send_to_influxdb(data)
-            m.assert_called_once_with([expected])
+            m.assert_called_once_with(expected)

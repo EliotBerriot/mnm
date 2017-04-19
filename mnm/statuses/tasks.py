@@ -42,6 +42,21 @@ def send_to_influxdb(self, data):
     p['tags']['has_images'] = p['fields']['images_count'] > 0
     p['tags']['has_links'] = p['fields']['links_count'] > 0
 
-    influxdb_client.push([p])
+    points = [p]
+
+    for t in p['fields']['tags'].split(','):
+        d = {
+            'measurement': 'hashtags',
+            'time': data['created_at'],
+            'fields': {
+                '_quantity': 1,
+            },
+            'tags': {
+                'name': t
+            }
+        }
+        points.append(d)
+
+    influxdb_client.push(points)
 
     return p
