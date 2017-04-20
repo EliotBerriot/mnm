@@ -31,10 +31,10 @@ def send_to_influxdb(self, data):
     p['fields']['content_length'] = len(content)
     p['tags']['is_reply'] = data['in_reply_to_account_id'] is not None
     p['tags']['is_reblog'] = data['reblog'] is not None
-    p['tags']['is_sensitive'] = data['sensitive']
+    p['tags']['is_sensitive'] = bool(data['sensitive'])
     p['tags']['language'] = language.guess(content)
     spoiler_text = data.get('spoiler_text', '')
-    p['tags']['has_content_warning'] = spoiler_text and len(spoiler_text) > 0
+    p['tags']['has_content_warning'] = bool(spoiler_text)
 
     instance = data['uri'].split(',')[0].split(':')[1]
     p['tags']['instance'] = instance
