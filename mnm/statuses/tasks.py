@@ -33,6 +33,8 @@ def send_to_influxdb(self, data):
     p['tags']['is_reblog'] = data['reblog'] is not None
     p['tags']['is_sensitive'] = data['sensitive']
     p['tags']['language'] = language.guess(content)
+    spoiler_text = data.get('spoiler_text', '')
+    p['tags']['has_content_warning'] = spoiler_text and len(spoiler_text) > 0
 
     instance = data['uri'].split(',')[0].split(':')[1]
     p['tags']['instance'] = instance

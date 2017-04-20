@@ -56,7 +56,7 @@ class TestStatus(TestCase):
             ],
             'created_at': '2017-04-18T19:04:12.000Z',
             'content': '<p>Partage photo du soir : Un joli portrait en noir et blanc ~ <br>Photographe : Dominique Weisrock</p><p><a href="https://oc.todon.fr/media/8WuCAB17ozgIB6BX6vU" rel="nofollow noopener"><span class="invisible">https://</span><span class="ellipsis">oc.todon.fr/media/8WuCAB17ozgI</span><span class="invisible">B6BX6vU</span></a></p>',
-            'uri': 'tag:oc.todon.fr,2017-04-18:objectId=424018:objectType=Status', 'spoiler_text': ''}
+            'uri': 'tag:oc.todon.fr,2017-04-18:objectId=424018:objectType=Status', 'spoiler_text': 'yes'}
 
         expected = [
             {
@@ -81,6 +81,7 @@ class TestStatus(TestCase):
                     'application': "web",
                     'visibility': "public",
                     'has_images': True,
+                    'has_content_warning': True,
                     'has_links': True,
                     'language': 'fr',
                 }
