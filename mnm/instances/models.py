@@ -43,9 +43,12 @@ class Instance(models.Model):
         return influxdb_client.push([self.to_influxdb()])
 
     def import_geoip_data(self, data):
+        from . import parsers
+        tld_country = parsers.fetch_country_from_tld(self.name)
+
         self.latitude = data['latitude']
         self.longitude = data['longitude']
-        self.country_code = data['country_code']
+        self.country_code = tld_country or data['country_code']
         self.region_code = data['region_code']
 
     def to_influxdb(self, table='instances', time=None):

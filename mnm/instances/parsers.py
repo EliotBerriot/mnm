@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from django.utils import timezone
 
 from . import models
@@ -64,3 +65,20 @@ def fetch_country(hostname):
     response.raise_for_status()
     payload = json.loads(response.content.decode('utf-8'))
     return payload
+
+
+def fetch_country_from_tld(hostname):
+    countries_file = os.path.join(
+        os.path.dirname(__file__), 'countries.json')
+    with open(countries_file) as f:
+        countries = json.load(f)
+    tld = '.{}'.format(hostname.split('.')[-1])
+    candidates = [
+        c['cca2']
+        for c in countries
+        if tld in c.get('tld')
+    ]
+    try:
+        return candidates[0]
+    except IndexError:
+        return None

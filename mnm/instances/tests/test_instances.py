@@ -3,8 +3,9 @@ import unittest
 import requests
 import requests_mock
 from test_plus.test import TestCase
-from mnm.instances import models, parsers
 from django.utils import timezone
+from mnm.instances import models, parsers, tasks
+
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_data')
 
@@ -212,6 +213,35 @@ class TestInstances(TestCase):
         self.assertEqual(results['time_zone'], 'Europe/Paris')
         self.assertEqual(results['latitude'], 48.8582)
         self.assertEqual(results['longitude'], 2.3387)
+
+    def test_can_fetch_instance_country_from_tld(self):
+        self.assertEqual(
+            parsers.fetch_country_from_tld('mastodon.fr'), 'FR')
+        self.assertEqual(
+            parsers.fetch_country_from_tld('mastodon.es'), 'ES')
+        self.assertEqual(
+            parsers.fetch_country_from_tld('mastodon.social'), None)
+
+    @requests_mock.mock()
+    def test_fetch_countries_uses_tld_countries_whenever_possible(self, m):
+        existing = models.Instance.objects.create(
+            name='mastodon.es',
+        )
+        # we mock by returning french IP, but the TLD is es, so it should be
+        # spanish in the end
+        html = os.path.join(DATA_DIR, 'freegeoip.json')
+        with open(html) as f:
+            content = f.read()
+
+        hostname = 'mastodon.es'
+        url = 'https://freegeoip.net/json/{}'.format(hostname)
+        m.get(url, text=content)
+
+        tasks.fetch_instances_countries()
+
+        existing.refresh_from_db()
+
+        self.assertEqual(existing.country_code, 'ES')
 
     def test_can_get_instance_geohash(self):
         instance = models.Instance.objects.create(

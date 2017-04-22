@@ -2,10 +2,13 @@ from django.utils import timezone
 import itertools
 import requests
 from mnm.taskapp import celery
+from celery.utils.log import get_task_logger
 
 from . import parsers
 from . import models
 from . import influxdb_client
+
+logger = get_task_logger(__name__)
 
 
 def grouper(n, iterable):
@@ -36,7 +39,7 @@ def fetch_instances_countries(self, maximum=10, empty=True):
     qs = models.Instance.objects.filter(country_code__isnull=empty)
 
     for instance in qs.order_by('?')[:maximum]:
-        print('Fetching geo data for {}...'.format(instance.name))
+        logger.info('Fetching geo data for {}...'.format(instance.name))
         try:
             data = parsers.fetch_country(instance.name)
         except requests.HTTPError:
