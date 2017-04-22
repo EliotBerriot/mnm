@@ -4,7 +4,10 @@ import requests
 import requests_mock
 from test_plus.test import TestCase
 from django.utils import timezone
-from mnm.instances import models, parsers, tasks
+from mnm.instances import models
+from mnm.instances import parsers
+from mnm.instances import countries
+from mnm.instances import tasks
 
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_data')
@@ -114,7 +117,7 @@ class TestInstances(TestCase):
             for key, value in expected[i].items():
                 self.assertEqual(getattr(instance, key), value)
 
-    def test_can_serialize_instnce_to_influxdb(self):
+    def test_can_serialize_instance_to_influxdb(self):
         now = timezone.now()
         existing = models.Instance.objects.create(
             name='mastodon.social',
@@ -149,6 +152,7 @@ class TestInstances(TestCase):
                 'open_registrations': True,
                 'country_code': None,
                 'region_code': None,
+                'region': None,
             },
         }
         self.assertEqual(data, expected)
@@ -166,6 +170,7 @@ class TestInstances(TestCase):
             users=330,
             country_code='FR',
             region_code='PA',
+            region='Europe',
             statuses=1132540,
             last_fetched=now,
             connections=827
@@ -185,6 +190,7 @@ class TestInstances(TestCase):
                 'geohash': None,
                 'country_code': 'FR',
                 'region_code': 'PA',
+                'region': 'Europe',
                 'name': 'mastodon.social',
                 'ipv6': False,
                 'https_rank': 'A',
@@ -207,7 +213,24 @@ class TestInstances(TestCase):
         url = 'https://freegeoip.net/json/{}'.format(hostname)
         m.get(url, text=content)
 
-        results = parsers.fetch_country('mastodon.xyz')
+        results = countries.fetch_country('mastodon.xyz')
+        self.assertEqual(results['country_code'], 'FR')
+        self.assertEqual(results['country_name'], 'France')
+        self.assertEqual(results['time_zone'], 'Europe/Paris')
+        self.assertEqual(results['latitude'], 48.8582)
+        self.assertEqual(results['longitude'], 2.3387)
+
+    @requests_mock.mock()
+    def test_can_fetch_instance_country(self, m):
+        html = os.path.join(DATA_DIR, 'freegeoip.json')
+        with open(html) as f:
+            content = f.read()
+
+        hostname = 'mastodon.xyz'
+        url = 'https://freegeoip.net/json/{}'.format(hostname)
+        m.get(url, text=content)
+
+        results = countries.fetch_country('mastodon.xyz')
         self.assertEqual(results['country_code'], 'FR')
         self.assertEqual(results['country_name'], 'France')
         self.assertEqual(results['time_zone'], 'Europe/Paris')
@@ -216,11 +239,11 @@ class TestInstances(TestCase):
 
     def test_can_fetch_instance_country_from_tld(self):
         self.assertEqual(
-            parsers.fetch_country_from_tld('mastodon.fr'), 'FR')
+            countries.fetch_country_from_tld('mastodon.fr'), 'FR')
         self.assertEqual(
-            parsers.fetch_country_from_tld('mastodon.es'), 'ES')
+            countries.fetch_country_from_tld('mastodon.es'), 'ES')
         self.assertEqual(
-            parsers.fetch_country_from_tld('mastodon.social'), None)
+            countries.fetch_country_from_tld('mastodon.social'), None)
 
     @requests_mock.mock()
     def test_fetch_countries_uses_tld_countries_whenever_possible(self, m):
@@ -242,6 +265,7 @@ class TestInstances(TestCase):
         existing.refresh_from_db()
 
         self.assertEqual(existing.country_code, 'ES')
+        self.assertEqual(existing.region, 'Europe')
 
     def test_can_get_instance_geohash(self):
         instance = models.Instance.objects.create(

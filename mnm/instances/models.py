@@ -23,6 +23,7 @@ class Instance(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     country_code = models.CharField(null=True, blank=True, max_length=5)
     region_code = models.CharField(null=True, blank=True, max_length=5)
+    region = models.CharField(null=True, blank=True, max_length=30)
 
     # it's sad, but some instances start reporting fake numbers,
     # see https://github.com/EliotBerriot/mnm/issues/8
@@ -42,15 +43,6 @@ class Instance(models.Model):
     def push_to_influxdb(self):
         return influxdb_client.push([self.to_influxdb()])
 
-    def import_geoip_data(self, data):
-        from . import parsers
-        tld_country = parsers.fetch_country_from_tld(self.name)
-
-        self.latitude = data['latitude']
-        self.longitude = data['longitude']
-        self.country_code = tld_country or data['country_code']
-        self.region_code = data['region_code']
-
     def to_influxdb(self, table='instances', time=None):
         if not time:
             try:
@@ -68,6 +60,7 @@ class Instance(models.Model):
                 'name': self.name,
                 'country_code': self.country_code,
                 'region_code': self.region_code,
+                'region': self.region,
                 'geohash': self.geohash,
             },
             "fields": {

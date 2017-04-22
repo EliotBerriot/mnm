@@ -5,6 +5,7 @@ from mnm.taskapp import celery
 from celery.utils.log import get_task_logger
 
 from . import parsers
+from . import countries
 from . import models
 from . import influxdb_client
 
@@ -34,6 +35,19 @@ def fetch_instances(self, table):
         influxdb_client.push(list(group))
 
 
+def fetch_host_geo_data(hostname):
+    geoip_data = countries.fetch_country(hostname)
+    tld_country = countries.fetch_country_from_tld(hostname)
+    country = tld_country or geoip_data['country_code']
+    region = countries.get_country_region(country)
+
+    return {
+        'country': country,
+        'region': region,
+        'geoip_data': geoip_data
+    }
+
+
 @celery.app.task(bind=True)
 def fetch_instances_countries(self, maximum=10, empty=True):
     qs = models.Instance.objects.filter(country_code__isnull=empty)
@@ -41,9 +55,12 @@ def fetch_instances_countries(self, maximum=10, empty=True):
     for instance in qs.order_by('?')[:maximum]:
         logger.info('Fetching geo data for {}...'.format(instance.name))
         try:
-            data = parsers.fetch_country(instance.name)
+            data = fetch_host_geo_data(instance.name)
         except requests.HTTPError:
             continue
 
-        instance.import_geoip_data(data)
+        instance.latitude = data['geoip_data']['latitude']
+        instance.longitude = data['geoip_data']['longitude']
+        instance.country_code = data['country']
+        instance.region = data['region']
         instance.save()
