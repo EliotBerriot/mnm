@@ -60,6 +60,8 @@ LOCAL_APPS = [
     'mnm.users.apps.UsersConfig',
     'mnm.instances',
     'mnm.statuses',
+    'mnm.client',
+    'mnm.bot',
     # Your stuff: custom apps go here
 ]
 
@@ -333,4 +335,11 @@ STATUSES_RECORD = {
     'client_secret': env('STATUSES_RECORD_CLIENT_SECRET', default=''),
     'access_token': env('STATUSES_RECORD_ACCESS_TOKEN', default=''),
     'api_base_url': env('STATUSES_RECORD_URL', default=''),
+}
+
+STATS_BOT = {
+    'client_id': env('STATS_BOT_CLIENT_ID', default=''),
+    'client_secret': env('STATS_BOT_CLIENT_SECRET', default=''),
+    'access_token': env('STATS_BOT_ACCESS_TOKEN', default=''),
+    'api_base_url': env('STATS_BOT_URL', default=''),
 }

@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from django.conf import settings
 from mnm.statuses import record
+from mnm import client
 
 
 class Command(BaseCommand):
@@ -13,7 +14,7 @@ class Command(BaseCommand):
         while True:
             print('Initiating connection...')
             try:
-                client = record.get_client(
+                client = client.get_client(
                     client_id=settings.STATUSES_RECORD['client_id'],
                     client_secret=settings.STATUSES_RECORD['client_secret'],
                     access_token=settings.STATUSES_RECORD['access_token'],
