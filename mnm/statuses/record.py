@@ -1,34 +1,10 @@
-
+import mastodon
 from mnm.statuses import tasks
 
 
 class StatusListener(mastodon.StreamListener):
         def on_update(self, status):
             tasks.send_to_influxdb.delay(status)
-
-# get your access token / secrets
-# mastodon.Mastodon.create_app(
-#      'mnm',
-#      to_file='mnm.txt',
-#      api_base_url='instanceurl',
-# )
-
-# m = mastodon.Mastodon(client_id='mnm.txt', api_base_url='instanceurl',)
-# m.log_in(
-#      'email@domain',
-#      'password',
-#      scopes=['read'],
-#      to_file='mnm_user.txt',
-#
-# )
-#
-# m = mastodon.Mastodon(
-#     client_id='mnm.txt',
-#     access_token='mnm_user.txt',
-#     api_base_url='instanceurl',
-# )
-#
-# m.public_stream(StatusListener())
 
 
 def record_public_status(client):
