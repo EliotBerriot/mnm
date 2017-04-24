@@ -17,3 +17,23 @@ class Bot(object):
             status,
             visibility=visibility,
         )
+
+    def parse(self, status):
+        real_command = [
+            w for w in status.split(' ')
+            if '@' not in w
+        ]
+        try:
+            command = real_command[0]
+        except IndexError:
+            return None, None
+
+        # non-slash messages are ignored
+        if not command.startswith('/'):
+            return None, None
+
+        # remove the slash
+        command = command[1:]
+        arguments = real_command[1:]
+
+        return command, arguments
