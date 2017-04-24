@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Using the stats bot</h2>
+    <p>The stats bot offer a complementary way to interact with the MNM project directly from your Mastodon account:</p>
+    <ul>
+        <li>To quickly get and share some data about users, trending hashtags or instances...</li>
+        <li>To subscribe to daily updates about important metrics of the network</li>
+    </ul>
+    <p>In order to use it, you simply need to mention the MNM bot from you mastodon account, like so: "@{{ bot_name }} /command". Of course, you will have to replace "/command" with an actual command. Available commands are listed below.</p>
+    <p>This bot is stil in early development and more feature will be added soon!</p>
+    <hr />
+    {% for command in commands %}
+        <h4>{{ command.code }}</h4>
+        <p>{{ command.description }}</p>
+        {% if command.usages %}
+            <p>Example usage:</p>
+            <ul>
+                {% for usage in command.usages %}
+                    <li><pre>@{{ bot_name }} /{{ command.code }} {{ usage.snippet }}</pre>{{ usage.description }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Usage: <pre>@{{ bot_name }} /{{ command.code }}</pre></p>
+        {% endif %}
+    {% endfor %}
+
+
+
+{% endblock content %}

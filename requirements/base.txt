@@ -53,5 +53,5 @@ requests
 influxdb
 python-geohash
 ipython
-git+git://github.com/halcy/Mastodon.py.git@61f014f3227a7e47a04e27dfe088ca69ea4e2152
+git+git://github.com/EliotBerriot/Mastodon.py.git@d8adb28cdefdf42022984048f7bafa062d8d71ee
 langdetect

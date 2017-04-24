@@ -60,3 +60,5 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
         'django.template.loaders.app_directories.Loader',
     ], ],
 ]
+
+STATS_BOT['name'] = 'mnm@mastodon.test'

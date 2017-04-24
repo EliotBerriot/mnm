@@ -1,0 +1,5 @@
+Hello there :)
+
+If you don't know how to interact with me, please check out the help page: {{ base_url }}{% url 'bot:help' %}.
+
+You can ask for feature requests or report errors using the issue tracker: https://github.com/EliotBerriot/mnm/issues

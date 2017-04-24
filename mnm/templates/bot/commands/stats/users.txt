@@ -1,0 +1,3 @@
+{{ stats.total }} users
+{% if stats.1h >= 0%}+{{ stats.1h }}{% else %}-{{ stats.1h }}{% endif %} in the last hour
+{% if stats.24h >= 0%}+{{ stats.24h }}{% else %}-{{ stats.24h }}{% endif %} in the last day

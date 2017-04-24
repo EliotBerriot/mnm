@@ -81,3 +81,19 @@ services:
       - POSTGRES_USER=mnm
       - USE_DOCKER=yes
       - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
+
+  bot:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile-dev
+    env_file: .env
+    volumes:
+        - .:/app
+    depends_on:
+      - postgres
+      - redis
+    command: python manage.py start_bot
+    environment:
+      - POSTGRES_USER=mnm
+      - USE_DOCKER=yes
+      - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test

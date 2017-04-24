@@ -1,0 +1,3 @@
+Sorry, an unknown error occured while processing your request.
+
+Please retry later or open an issue on the issue tracker (https://github.com/EliotBerriot/mnm/issues) if the problem persists.

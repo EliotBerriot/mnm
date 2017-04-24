@@ -320,7 +320,7 @@ CELERYBEAT_SCHEDULE = {
             'maximum': 10,
         }
     },
-    'refresh_isntances_country': {
+    'refresh_instances_country': {
         'task': 'mnm.instances.tasks.fetch_instances_countries',
         'schedule': crontab(minute=0),
         'kwargs': {
@@ -339,6 +339,7 @@ STATUSES_RECORD = {
 
 STATS_BOT = {
     'client_id': env('STATS_BOT_CLIENT_ID', default=''),
+    'name': env('STATS_BOT_name', default='mnm'),
     'client_secret': env('STATS_BOT_CLIENT_SECRET', default=''),
     'access_token': env('STATS_BOT_ACCESS_TOKEN', default=''),
     'api_base_url': env('STATS_BOT_URL', default=''),
