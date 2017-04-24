@@ -24,7 +24,7 @@ class RegularStat(Stat):
         return {
             'total': results[-1]['sum'],
             '1h': results[-1]['sum'] - results[-2]['sum'],
-            '24h': results[-1]['sum'] - results[0]['sum'],
+            '24h': results[-1]['sum'] - results[1]['sum'],
         }
 
 
@@ -50,5 +50,5 @@ class StatusesStat(RegularStat):
 
 stats = collections.OrderedDict()
 stats['users'] = UsersStat()
-stats['instances'] = InstancesStat()
+# stats['instances'] = InstancesStat()
 stats['statuses'] = StatusesStat()
