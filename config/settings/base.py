@@ -52,11 +52,13 @@ THIRD_PARTY_APPS = [
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'dynamic_preferences',
 ]
 
 # Apps specific for this project go here.
 LOCAL_APPS = [
     # custom users app
+    'mnm.common',
     'mnm.users.apps.UsersConfig',
     'mnm.instances',
     'mnm.statuses',
@@ -175,6 +177,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
+                'mnm.instances.context_processors.instances_count',
             ],
         },
     },

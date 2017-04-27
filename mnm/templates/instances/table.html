@@ -1,0 +1,37 @@
+<table class="ui celled table">
+
+    <thead>
+        <tr>
+            <th>Instance</th>
+            <th>Users</th>
+            <th>Statuses</th>
+            <th>Country</th>
+            <th>Last fetched on</th>
+            <th>Detailed dashboard</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for instance in instances %}
+            <tr>
+                <td>
+                    <strong><a href="https://{{ instance.name }}">{{ instance.name }}</a></strong>
+                </td>
+                <td>{{ instance.users }}</td>
+                <td>{{ instance.statuses }}</td>
+                <td>
+                    {% with d=instance.country_data %}
+                        {% if d %}
+                            <i class="{{ d.cca2.lower }} flag"></i> {{ d.name.common }}
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td {% if instance.last_fetched %} data-tooltip="{{ instance.last_fetched }}"{% endif %}>
+                    {{ instance.last_fetched|timesince }} ago
+                </td>
+                <td>
+                    <a href="{{ instance.get_dashboard_url }}" target="_blank"><i class="line chart icon"></i> Go to dashboard</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

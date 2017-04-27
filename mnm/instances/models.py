@@ -2,7 +2,16 @@ import geohash
 
 from django.db import models
 
+from dynamic_preferences.registries import global_preferences_registry
+
 from . import influxdb_client
+from . import countries
+
+
+class InstanceQuerySet(models.QuerySet):
+
+    def public(self):
+        return self.exclude(is_blocked=True)
 
 
 class Instance(models.Model):
@@ -29,6 +38,8 @@ class Instance(models.Model):
     # see https://github.com/EliotBerriot/mnm/issues/8
     is_blocked = models.BooleanField(default=False)
 
+    objects = InstanceQuerySet.as_manager()
+
     @property
     def url(self):
         return 'https://{}'.format(self.name)
@@ -39,6 +50,17 @@ class Instance(models.Model):
             return
 
         return geohash.encode(self.latitude, self.longitude, precision=3)
+
+    @property
+    def country_data(self):
+        if not self.country_code:
+            return {}
+        return countries.get_country_data_from_code(self.country_code)
+
+    def get_dashboard_url(self):
+        global_preferences = global_preferences_registry.manager()
+        base_url = global_preferences['instances__detail_dashboard_url']
+        return base_url.format(instance=self.name)
 
     def push_to_influxdb(self):
         return influxdb_client.push([self.to_influxdb()])

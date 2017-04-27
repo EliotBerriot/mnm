@@ -25,6 +25,18 @@ def get_countries_data():
         return json.load(f)
 
 
+def get_country_data_from_code(code):
+    candidates = [
+        c
+        for c in get_countries_data()
+        if code == c['cca2']
+    ]
+    try:
+        return candidates[0]
+    except IndexError:
+        return None
+
+
 def fetch_country_from_tld(hostname):
 
     tld = '.{}'.format(hostname.split('.')[-1])

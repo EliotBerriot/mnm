@@ -1,0 +1,29 @@
+{% load utils i18n %}
+
+<div class="ui hidden divider"></div>
+<div class="ui centered grid">
+   <div class="ui pagination menu">
+
+
+          <a class="ui item {% if not has_previous %}disabled{% endif %}" href="{% if has_previous %}?{% query_transform request page=previous %}{% endif %}">{% trans 'Previous' %}</a>
+
+       {% if show_first %}
+          <a class="ui item" href="?{% query_transform request page=1 %}">1</a>
+          <a class="ui item disabled">&hellip;</a>
+       {% endif %}
+       {% for linkpage in page_numbers %}
+          {% ifequal linkpage page %}
+             <a class="ui item active" href="">{{ page }}</a>
+          {% else %}
+             <a class="ui item" href="?{% query_transform request page=linkpage %}"
+                   >{{ linkpage }}</a>
+          {% endifequal %}
+       {% endfor %}
+       {% if show_last %}
+          <a class="ui item disabled">&hellip;</a>
+          <a class="ui item" href="?{% query_transform request page=paginator.num_pages %}">{{ pages }}</a>
+       {% endif %}
+      <a class="ui item {% if not has_next %}disabled{% endif %}" href="{% if has_next %}?{% query_transform request page=next %}{% endif %}">{% trans 'Next' %}</a>
+   </div>
+</div>
+<div class="ui hidden divider"></div>

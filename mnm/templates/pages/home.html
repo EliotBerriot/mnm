@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Welcome to the Mastodon Monitoring Project</h1>
-    <p>We're here to monitor the Mastodon Network and offer publicly available and easily browsable metrics about Mastodon.</p>
-    <p>Check-out our <a target="_blank" href="https://dashboards.mnm.social">pretty dashboards</a> to start diving into the data.</p>
+    <div class="ui text container">
+        <h1 class="ui header">Welcome to the Mastodon Monitoring Project</h1>
+        <p>We're here to monitor the Mastodon Network and offer publicly available and easily browsable metrics about Mastodon.</p>
+        <p>Check-out our <a target="_blank" href="https://dashboards.mnm.social">pretty dashboards</a> to start diving into the data.</p>
 
 
-    <p>If you want to get involved, report an issue or request a feature, please visit <a href="https://github.com/EliotBerriot/mnm/issues">our repository</a>.</p>
+        <p>If you want to get involved, report an issue or request a feature, please visit <a href="https://github.com/EliotBerriot/mnm/issues">our repository</a>.</p>
+    </div>
+    <div class="ui hidden divider"></div>
+    <div class="ui container">
+        <h2 class="ui horizontal divider header">Biggest instances of the Mastodon network</h2>
+        {% include 'instances/table.html' with instances=biggest_instances %}
+        <div class="ui center aligned vertical segment">
+            <a class="ui teal button" href="{% url 'instances:index' %}">Browse all {{ instances_count }} instances <i class="angle right icon"></i></a>
+        </div>
+    </div>
 {% endblock content %}
