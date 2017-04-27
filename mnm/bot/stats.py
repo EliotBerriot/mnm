@@ -11,7 +11,7 @@ class Stat(object):
         return get_client().query(query)
 
 
-class RegularStat(Stat):
+class InstanceFieldStat(Stat):
     query = """
         SELECT sum("{field}")
         FROM instances_hourly
@@ -28,25 +28,26 @@ class RegularStat(Stat):
         }
 
 
-class UsersStat(RegularStat):
+class UsersStat(InstanceFieldStat):
     code = 'users'
     field = "users"
 
     description = 'Users-related metrics'
 
 
-class InstancesStat(RegularStat):
+class StatusesStat(InstanceFieldStat):
+    code = 'statuses'
+    field = "statuses"
+
+    description = 'Statuses-related metrics'
+
+
+class InstancesStat(InstanceFieldStat):
     code = 'instances'
     field = "instances"
 
     description = 'Instances-related metrics'
 
-
-class StatusesStat(RegularStat):
-    code = 'statuses'
-    field = "statuses"
-
-    description = 'Statuses-related metrics'
 
 stats = collections.OrderedDict()
 stats['users'] = UsersStat()
