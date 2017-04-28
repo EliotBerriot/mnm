@@ -3,7 +3,7 @@ mnm
 
 Mastodon Network Monitoring: track and display browsable stats about Mastodon network (instances, toots, users...).
 
-Public instance available here: [https://mnm.eliotberriot.com](https://mnm.eliotberriot.com)
+Public instance available here: https://mnm.eliotberriot.com
 
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
