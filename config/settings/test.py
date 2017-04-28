@@ -62,3 +62,4 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 ]
 
 STATS_BOT['name'] = 'mnm@mastodon.test'
+NOTIFY_ON_RELEASE = False

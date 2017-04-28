@@ -8,3 +8,11 @@ def reply(self, status):
     response = b.handle(status)
 
     return response
+
+
+@celery.app.task(bind=True)
+def publish(self, *args, **kwargs):
+    b = bot.Bot()
+    response = b.publish(*args, **kwargs)
+
+    return response

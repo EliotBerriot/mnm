@@ -58,7 +58,7 @@ services:
     depends_on:
      - postgres
      - redis
-    command: celery -A mnm.taskapp worker -l INFO
+    command: celery -A mnm.taskapp worker -l DEBUG
     env_file: .env
     environment:
       - POSTGRES_USER=mnm

@@ -56,3 +56,5 @@ ipython
 git+git://github.com/EliotBerriot/Mastodon.py.git@d8adb28cdefdf42022984048f7bafa062d8d71ee
 langdetect
 django-dynamic-preferences
+markdown
+django-cachalot

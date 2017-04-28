@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="ui text container">
+        <h1 class="ui header">{{ releases|length }} Mastodon releases were published</h1>
+        <p>Release data is gathered from the <a href="https://github.com/tootsuite/mastodon/releases">GitHub repository</a> every few minutes.</p>
+        {% regroup releases by important_version as grouped_releases %}
+        {% for group in grouped_releases %}
+            <h2 class="ui horizontal divider header">{{ group.grouper }} branch</h2>
+            <div class="ui divided items">
+                {% for r in group.list %}
+                    <div class="ui item">
+                        <div class="content">
+                          <div class="header">
+                              <a href="{{ r.url }}">{{ r.version }}</a>
+                              {% if r == current_release %}<span class="ui orange label">latest</span>{% endif %} 
+                          </div>
+                          <div class="meta">
+                            <span class="data"><i class="ui clock icon"></i> {{ r.release_date|timesince }} ago</span>
+                          </div>
+                          <div class="description">
+                              <div class="ui accordion">
+                                  <div class="title">
+                                    <i class="dropdown icon"></i>
+                                    View release notes
+                                  </div>
+                                  <div class="content">
+                                    {{ r.content_rendered|safe }}
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock content %}

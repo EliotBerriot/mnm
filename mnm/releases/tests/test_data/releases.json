@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://api.github.com/repos/tootsuite/mastodon/releases/6215456",
+    "assets_url": "https://api.github.com/repos/tootsuite/mastodon/releases/6215456/assets",
+    "upload_url": "https://uploads.github.com/repos/tootsuite/mastodon/releases/6215456/assets{?name,label}",
+    "html_url": "https://github.com/tootsuite/mastodon/releases/tag/v1.3.1",
+    "id": 6215456,
+    "tag_name": "v1.3.1",
+    "target_commitish": "master",
+    "name": "v1.3.1",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2017-04-27T21:37:22Z",
+    "published_at": "2017-04-27T21:41:23Z",
+    "assets": [
+
+    ],
+    "tarball_url": "https://api.github.com/repos/tootsuite/mastodon/tarball/v1.3.1",
+    "zipball_url": "https://api.github.com/repos/tootsuite/mastodon/zipball/v1.3.1",
+    "body": "Hello world 1"
+  },
+  {
+    "url": "https://api.github.com/repos/tootsuite/mastodon/releases/6210603",
+    "assets_url": "https://api.github.com/repos/tootsuite/mastodon/releases/6210603/assets",
+    "upload_url": "https://uploads.github.com/repos/tootsuite/mastodon/releases/6210603/assets{?name,label}",
+    "html_url": "https://github.com/tootsuite/mastodon/releases/tag/v1.3",
+    "id": 6210603,
+    "tag_name": "v1.3",
+    "target_commitish": "master",
+    "name": "v1.3",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2017-04-27T20:32:38Z",
+    "published_at": "2017-04-27T21:18:16Z",
+    "assets": [
+
+    ],
+    "tarball_url": "https://api.github.com/repos/tootsuite/mastodon/tarball/v1.3",
+    "zipball_url": "https://api.github.com/repos/tootsuite/mastodon/zipball/v1.3",
+    "body": "Hello world 2"
+  }
+]

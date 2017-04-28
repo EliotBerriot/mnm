@@ -75,3 +75,4 @@ CELERY_ALWAYS_EAGER = True
 
 # Your local stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+AUTH_PASSWORD_VALIDATORS = []

@@ -53,6 +53,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'dynamic_preferences',
+    'cachalot',
 ]
 
 # Apps specific for this project go here.
@@ -64,6 +65,7 @@ LOCAL_APPS = [
     'mnm.statuses',
     'mnm.client',
     'mnm.bot',
+    'mnm.releases',
     # Your stuff: custom apps go here
 ]
 
@@ -178,6 +180,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Your stuff: custom template context processors go here
                 'mnm.instances.context_processors.instances_count',
+                'mnm.releases.context_processors.releases',
             ],
         },
     },
@@ -305,6 +308,10 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute='*/5'),
         'args': ('instances',)
     },
+    'fetch_releases': {
+        'task': 'mnm.releases.tasks.fetch_and_import_releases',
+        'schedule': crontab(minute='*/5'),
+    },
     'fetch_instances_1h': {
         'task': 'mnm.instances.tasks.fetch_instances',
         'schedule': crontab(minute=0, hour='*'),
@@ -347,3 +354,5 @@ STATS_BOT = {
     'access_token': env('STATS_BOT_ACCESS_TOKEN', default=''),
     'api_base_url': env('STATS_BOT_URL', default=''),
 }
+
+NOTIFY_ON_RELEASE = env.bool('NOTIFY_ON_RELEASE', default=True)
