@@ -1,4 +1,4 @@
-import langdetect
+import langdetect.detector
 
 
 def guess(string):
@@ -6,5 +6,8 @@ def guess(string):
         # we cannot guess accurately on short strings
         return 'UNKNOWN'
 
-    r = langdetect.detect_langs(string)[0]
+    try:
+        r = langdetect.detect_langs(string)[0]
+    except langdetect.detector.LangDetectException:
+        return 'UNKNOWN'
     return r.lang if r.prob >= 0.75 else 'UNKNOWN'
