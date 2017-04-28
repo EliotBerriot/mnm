@@ -1,5 +1,6 @@
 import requests
 import datetime
+import pytz
 
 from . import models
 
@@ -17,9 +18,9 @@ def fetch_releases():
         if r['draft'] or r['prerelease']:
             continue
         r['created_at'] = datetime.datetime.strptime(
-            r['created_at'], date_format)
+            r['created_at'], date_format).replace(tzinfo=pytz.UTC)
         r['published_at'] = datetime.datetime.strptime(
-            r['published_at'], date_format)
+            r['published_at'], date_format).replace(tzinfo=pytz.UTC)
 
         final_releases.append(r)
     return final_releases
