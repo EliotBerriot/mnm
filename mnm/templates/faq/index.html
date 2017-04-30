@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="ui grid context">
+        <div class="four wide column">
+            <div class="ui sticky vertical pointing menu">
+                {% for entry in entries %}
+                    <a class="item" href="#entry-{{ entry.id }}">{{ entry.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="eight wide column">
+            <div class="ui text container">
+                <h1 class="ui header">Frequently Asked Questions</h1>
+
+                {% for entry in entries %}
+                    <div class="ui vertical segment" id="entry-{{ entry.id }}">
+                        <h2><a href="#entry-{{ entry.id }}">{{ entry.title }}</a></h2>
+                        {{ entry.content_rendered|safe }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

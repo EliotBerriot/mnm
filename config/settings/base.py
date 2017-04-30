@@ -66,6 +66,7 @@ LOCAL_APPS = [
     'mnm.client',
     'mnm.bot',
     'mnm.releases',
+    'mnm.faq',
     # Your stuff: custom apps go here
 ]
 

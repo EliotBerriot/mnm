@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^bot/', include('mnm.bot.urls', namespace='bot')),
     url(r'^instances/', include('mnm.instances.urls', namespace='instances')),
     url(r'^releases/', include('mnm.releases.urls', namespace='releases')),
+    url(r'^faq/', include('mnm.faq.urls', namespace='faq')),
     url(r'^accounts/', include('allauth.urls')),
 
     # Your stuff: custom urls includes go here

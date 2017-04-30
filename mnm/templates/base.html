@@ -29,10 +29,12 @@
     <div class="ui inverted menu">
       <div class="ui container">
           <a class="header item" href="/">MNM</a>
-          <a class="item" href="{% url 'home' %}">Home</a>
           <a class="item" href="{% url 'instances:index' %}">Instances <div class="ui teal label">{{ instances_count }}</div></a>
           <a class="item" href="{% url 'releases:index' %}">Releases <div class="ui orange label">{{ current_release.version }}</div></a>
           <a class="item" href="{% url 'bot:help' %}">Stats bot</a>
+          <div class="right menu">
+            <a class="item" href="{% url 'faq:index' %}">FAQ</a>
+          </div>
 
       </div>
     </div>
