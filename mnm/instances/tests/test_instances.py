@@ -8,7 +8,9 @@ from mnm.instances import models
 from mnm.instances import parsers
 from mnm.instances import countries
 from mnm.instances import tasks
+from mnm.releases.tests.factories import ReleaseFactory
 
+from .factories import InstanceFactory
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'test_data')
 
@@ -129,7 +131,8 @@ class TestInstances(TestCase):
             users=330,
             statuses=1132540,
             last_fetched=now,
-            connections=827
+            connections=827,
+            release=None,
         )
 
         data = existing.to_influxdb()
@@ -153,6 +156,10 @@ class TestInstances(TestCase):
                 'country_code': None,
                 'region_code': None,
                 'region': None,
+                'release_full': 'UNKNOWN',
+                'release_major': 0,
+                'release_minor': 0,
+                'release_patch': 0,
             },
         }
         self.assertEqual(data, expected)
@@ -160,7 +167,7 @@ class TestInstances(TestCase):
     @unittest.mock.patch('mnm.instances.influxdb_client.push')
     def test_can_send_data_to_influxdb(self, m):
         now = timezone.now()
-        existing = models.Instance.objects.create(
+        existing = InstanceFactory(
             name='mastodon.social',
             up=True,
             https_score=81,
@@ -196,6 +203,10 @@ class TestInstances(TestCase):
                 'https_rank': 'A',
                 'up': True,
                 'open_registrations': True,
+                'release_full': existing.release.version_string,
+                'release_major': existing.release.tuple_version[0],
+                'release_minor': existing.release.tuple_version[1],
+                'release_patch': existing.release.tuple_version[2],
             },
         }
 
@@ -275,3 +286,24 @@ class TestInstances(TestCase):
         )
 
         self.assertEqual(instance.geohash, 'dr5')
+
+    @requests_mock.mock()
+    def test_can_fetch_instance_info(self, m):
+        with self.settings(NOTIFY_ON_RELEASE=False):
+            release = ReleaseFactory(tag='1.3')
+        payload = """{"uri":"mastodon.social","title":"Mastodon","description":"","email":"eugen@zeonfederated.com","version":"1.3"}"""
+        existing = models.Instance.objects.create(
+            name='mastodon.social',
+        )
+        url = existing.get_info_api_url()
+        self.assertEqual(url, 'https://mastodon.social/api/v1/instance')
+        m.get(url, text=payload)
+
+        tasks.fetch_instance_info(existing.pk)
+
+        existing.refresh_from_db()
+
+        self.assertEqual(existing.release, release)
+        self.assertEqual(existing.release.version_major, 1)
+        self.assertEqual(existing.release.version_minor, 3)
+        self.assertEqual(existing.release.version_patch, 0)

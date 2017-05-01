@@ -1,7 +1,7 @@
 import geohash
 
 from django.db import models
-
+from django.utils import timezone
 from dynamic_preferences.registries import global_preferences_registry
 
 from . import influxdb_client
@@ -17,6 +17,7 @@ class InstanceQuerySet(models.QuerySet):
 class Instance(models.Model):
     name = models.CharField(unique=True, max_length=255, db_index=True)
     last_fetched = models.DateTimeField(null=True, blank=True)
+    creation_date = models.DateTimeField(default=timezone.now)
 
     # date recorded when last fetching
     users = models.PositiveIntegerField(null=True, blank=True)
@@ -38,11 +39,16 @@ class Instance(models.Model):
     # see https://github.com/EliotBerriot/mnm/issues/8
     is_blocked = models.BooleanField(default=False)
 
+    release = models.ForeignKey(
+        'releases.Release', null=True, blank=True, related_name='instances')
     objects = InstanceQuerySet.as_manager()
 
     @property
     def url(self):
         return 'https://{}'.format(self.name)
+
+    def get_info_api_url(self):
+        return 'https://{}/api/v1/instance'.format(self.name)
 
     @property
     def geohash(self):
@@ -84,6 +90,10 @@ class Instance(models.Model):
                 'region_code': self.region_code,
                 'region': self.region,
                 'geohash': self.geohash,
+                'release_full': self.release.version_string if self.release else 'UNKNOWN',
+                'release_major': self.release.version_major if self.release else 0,
+                'release_minor': self.release.version_minor if self.release else 0,
+                'release_patch': self.release.version_patch if self.release else 0,
             },
             "fields": {
                 '_quantity': 1,

@@ -304,6 +304,11 @@ REFRESH_COUNTRY_DELAY = env.int('REFRESH_COUNTRY_DELAY', default=3000)
 
 CELERYBEAT_SCHEDULE = {
     # crontab(hour=0, minute=0, day_of_week='saturday')
+    'fetch_instances_info': {
+        'task': 'mnm.instances.tasks.fetch_instances_info',
+        'schedule': crontab(minute='*/5'),
+        'args': (30, )
+    },
     'fetch_instances_5m': {
         'task': 'mnm.instances.tasks.fetch_instances',
         'schedule': crontab(minute='*/5'),

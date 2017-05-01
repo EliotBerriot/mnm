@@ -4,6 +4,8 @@ import requests
 from mnm.taskapp import celery
 from celery.utils.log import get_task_logger
 
+from mnm.releases.models import Release
+
 from . import parsers
 from . import countries
 from . import models
@@ -64,3 +66,26 @@ def fetch_instances_countries(self, maximum=10, empty=True):
         instance.country_code = data['country']
         instance.region = data['region']
         instance.save()
+
+
+@celery.app.task(bind=True)
+def fetch_instances_info(maximum=30):
+    for instance in models.Instance.objects.all().order_by('?')[:maximum]:
+        fetch_instance_info.delay(instance.pk)
+
+
+@celery.app.task(bind=True)
+def fetch_instance_info(self, instance_pk):
+    instance = models.Instance.objects.get(pk=instance_pk)
+    response = requests.get(instance.get_info_api_url())
+    response.raise_for_status()
+    payload = response.json()
+    try:
+        version_string = payload['version']
+        release = Release.objects.get_from_version_string(version_string)
+        instance.release = release
+        instance.save()
+    except (Release.DoesNotExist, KeyError, IndexError):
+        pass
+
+    return payload

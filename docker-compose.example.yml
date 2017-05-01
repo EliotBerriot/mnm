@@ -56,7 +56,7 @@ services:
     depends_on:
      - postgres
      - redis
-    command: celery -A mnm.taskapp worker -l INFO
+    command: celery -A mnm.taskapp worker -l INFO --autoscale=12,3
 
   celerybeat:
     restart: unless-stopped

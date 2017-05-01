@@ -14,6 +14,19 @@ def sortable_version(*parts):
     return '.'.join(str(bit).zfill(5) for bit in parts)
 
 
+class ReleaseQuerySet(models.QuerySet):
+    def get_from_version_string(self, v):
+        parts = v.split('.')
+        kw = {}
+        kw['version_major'] = parts[0]
+        kw['version_minor'] = parts[1]
+        try:
+            kw['version_patch'] = parts[2]
+        except IndexError:
+            kw['version_patch'] = 0
+        return self.get(**kw)
+
+
 class Release(models.Model):
     release_date = models.DateTimeField()
     creation_date = models.DateTimeField(default=timezone.now)
@@ -27,6 +40,8 @@ class Release(models.Model):
     body = models.TextField(null=True, blank=True, default='')
 
     RELEASE_MESSAGE = "Mastodon {tag} has been released, check it out!\n\n{url}\n\n #mastodon #release"
+
+    objects = ReleaseQuerySet.as_manager()
 
     class Meta:
         unique_together = (
@@ -54,6 +69,10 @@ class Release(models.Model):
     @property
     def tuple_version(self):
         return (self.version_major, self.version_minor, self.version_patch)
+
+    @property
+    def version_string(self):
+        '{}.{}.{}'.format(*self.tuple_version)
 
     def save(self, **kwargs):
         self.version_major, self.version_minor, self.version_patch = self.version.version
