@@ -77,7 +77,10 @@ def fetch_instances_info(self, maximum=30):
 @celery.app.task(bind=True)
 def fetch_instance_info(self, instance_pk):
     instance = models.Instance.objects.get(pk=instance_pk)
-    response = requests.get(instance.get_info_api_url())
+    response = requests.get(
+        instance.get_info_api_url(),
+        verify=False,
+    )
     response.raise_for_status()
     payload = response.json()
     try:
