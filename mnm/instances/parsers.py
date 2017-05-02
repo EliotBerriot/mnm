@@ -41,7 +41,7 @@ def import_results(results):
     for row in results:
         row['last_fetched'] = row.pop('fetched_on')
         try:
-            i, _ = models.Instance.objects.update_or_create(
+            i, _ = models.Instance.objects.select_related().update_or_create(
                 name=row['name'],
                 defaults=row,
             )

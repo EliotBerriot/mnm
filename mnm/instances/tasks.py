@@ -31,7 +31,7 @@ def fetch_instances(self, table):
     parsers.import_results(results['instances'])
 
     data = []
-    for instance in models.Instance.objects.filter(is_blocked=False):
+    for instance in models.Instance.objects.select_related().filter(is_blocked=False):
         data.append(instance.to_influxdb(table=table))
     for group in grouper(50, data):
         influxdb_client.push(list(group))

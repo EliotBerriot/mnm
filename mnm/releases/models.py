@@ -72,7 +72,7 @@ class Release(models.Model):
 
     @property
     def version_string(self):
-        '{}.{}.{}'.format(*self.tuple_version)
+        return '{}.{}.{}'.format(*self.tuple_version)
 
     def save(self, **kwargs):
         self.version_major, self.version_minor, self.version_patch = self.version.version
