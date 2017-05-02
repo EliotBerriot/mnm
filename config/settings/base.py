@@ -301,32 +301,60 @@ FETCH_DELAY = env.int('FETCH_DELAY', default=300)
 FETCH_COUNTRY_DELAY = env.int('FETCH_COUNTRY_DELAY', default=300)
 REFRESH_COUNTRY_DELAY = env.int('REFRESH_COUNTRY_DELAY', default=3000)
 
+CELERY_ROUTES = {
+    'mnm.instances.tasks.*': {'queue': 'crawl'},
+    'mnm.releases.tasks.*': {'queue': 'crawl'},
+    'mnm.bot.tasks.*': {'queue': 'messaging'},
+    'mnm.statuses.tasks.*': {'queue': 'statuses'},
+}
 
 CELERYBEAT_SCHEDULE = {
     # crontab(hour=0, minute=0, day_of_week='saturday')
+    'fetch_from_instances_xyz': {
+        'task': 'mnm.instances.tasks.fetch_from_instances_xyz',
+        'schedule': crontab(minute='*/5'),
+        'options': {
+            'expires': 300,
+        },
+    },
     'fetch_instances_info': {
         'task': 'mnm.instances.tasks.fetch_instances_info',
-        'schedule': crontab(minute='*/5'),
-        'args': (30, )
+        'schedule': crontab(minute='*/30'),
+        'args': (None, ),
+        'options': {
+            'expires': 60 * 30,
+        },
     },
     'fetch_instances_5m': {
         'task': 'mnm.instances.tasks.fetch_instances',
         'schedule': crontab(minute='*/5'),
-        'args': ('instances',)
+        'args': ('instances',),
+        'options': {
+            'expires': 300,
+        },
     },
     'fetch_releases': {
         'task': 'mnm.releases.tasks.fetch_and_import_releases',
         'schedule': crontab(minute='*/5'),
+        'options': {
+            'expires': 300,
+        },
     },
     'fetch_instances_1h': {
         'task': 'mnm.instances.tasks.fetch_instances',
         'schedule': crontab(minute=0, hour='*'),
-        'args': ('instances_hourly',)
+        'args': ('instances_hourly',),
+        'options': {
+            'expires': 3600,
+        },
     },
     'fetch_instances_1d': {
         'task': 'mnm.instances.tasks.fetch_instances',
         'schedule': crontab(minute=0, hour=0),
-        'args': ('instances_daily',)
+        'args': ('instances_daily',),
+        'options': {
+            'expires': 3600 * 24,
+        },
     },
     'fetch_instances_countries_empty': {
         'task': 'mnm.instances.tasks.fetch_instances_countries',
@@ -334,7 +362,10 @@ CELERYBEAT_SCHEDULE = {
         'kwargs': {
             'empty': True,
             'maximum': 10,
-        }
+        },
+        'options': {
+            'expires': 300,
+        },
     },
     'refresh_instances_country': {
         'task': 'mnm.instances.tasks.fetch_instances_countries',
@@ -342,7 +373,10 @@ CELERYBEAT_SCHEDULE = {
         'kwargs': {
             'empty': False,
             'maximum': 10,
-        }
+        },
+        'options': {
+            'expires': 3600,
+        },
     },
 }
 

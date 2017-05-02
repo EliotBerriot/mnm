@@ -62,7 +62,6 @@ class TestInstances(TestCase):
         self.assertEqual(results['instances'][1]['https_score'], 96)
         self.assertEqual(results['instances'][1]['https_rank'], "A+")
 
-
     @requests_mock.mock()
     def test_can_get_or_create_instances_based_on_parse_results(self, m):
         existing = models.Instance.objects.create(

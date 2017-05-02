@@ -26,10 +26,13 @@ def grouper(n, iterable):
 
 
 @celery.app.task(bind=True)
-def fetch_instances(self, table):
+def fetch_from_instances_xyz(self):
     results = parsers.parser_instances_xyz()
     parsers.import_results(results['instances'])
 
+
+@celery.app.task(bind=True)
+def fetch_instances(self, table):
     data = []
     for instance in models.Instance.objects.select_related().filter(is_blocked=False):
         data.append(instance.to_influxdb(table=table))
@@ -70,8 +73,12 @@ def fetch_instances_countries(self, maximum=10, empty=True):
 
 @celery.app.task(bind=True)
 def fetch_instances_info(self, maximum=30):
-    for instance in models.Instance.objects.all().order_by('?')[:maximum]:
-        fetch_instance_info.delay(instance.pk)
+    qs = models.Instance.objects.all().order_by('?')
+    if maximum:
+        qs = qs[:maximum]
+
+    for instance in qs:
+        fetch_instance_info.apply_async(args=(instance.pk,), expires=600)
 
 
 @celery.app.task(bind=True)

@@ -34,7 +34,7 @@ services:
       - ./data/grafana/lib:/var/lib/grafana
       - ./compose/grafana/grafana.ini:/etc/grafana/grafana.ini
 
-  celeryworker: &base_app
+  celerybeat: &base_app
     restart: unless-stopped
     build:
       context: .
@@ -45,15 +45,23 @@ services:
      - postgres
      - redis
      - influxdb
-    command: celery -A mnm.taskapp worker -l INFO --autoscale=12,3
+    command: celery -A mnm.taskapp beat -l INFO
 
   django:
     <<: *base_app
     command: /gunicorn.sh
 
-  celerybeat:
+  worker_crawl:
     <<: *base_app
-    command: celery -A mnm.taskapp beat -l INFO
+    command: celery -A mnm.taskapp worker -l INFO --autoscale=16,2 -Q crawl
+
+  worker_statuses:
+    <<: *base_app
+    command: celery -A mnm.taskapp worker -l INFO --autoscale=8,2 -Q statuses
+
+  worker:
+    <<: *base_app
+    command: celery -A mnm.taskapp worker -l INFO --autoscale=8,2 -Q messaging,celery,default
 
   recorder:
     <<: *base_app

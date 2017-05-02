@@ -19,7 +19,7 @@ class BotListener(mastodon.StreamListener):
         if notification['type'] != 'mention':
             return
 
-        tasks.reply.delay(notification['status'])
+        tasks.reply.apply_async(args=(notification['status'],))
 
 
 class Bot(object):
