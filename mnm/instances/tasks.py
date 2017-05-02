@@ -69,7 +69,7 @@ def fetch_instances_countries(self, maximum=10, empty=True):
 
 
 @celery.app.task(bind=True)
-def fetch_instances_info(maximum=30):
+def fetch_instances_info(self, maximum=30):
     for instance in models.Instance.objects.all().order_by('?')[:maximum]:
         fetch_instance_info.delay(instance.pk)
 
