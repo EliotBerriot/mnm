@@ -34,19 +34,7 @@ services:
       - ./data/grafana/lib:/var/lib/grafana
       - ./compose/grafana/grafana.ini:/etc/grafana/grafana.ini
 
-  django:
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./compose/django/Dockerfile
-    user: django
-    depends_on:
-      - postgres
-      - redis
-    command: /gunicorn.sh
-    env_file: .env
-
-  celeryworker:
+  celeryworker: &base_app
     restart: unless-stopped
     build:
       context: .
@@ -56,19 +44,24 @@ services:
     depends_on:
      - postgres
      - redis
+     - influxdb
     command: celery -A mnm.taskapp worker -l INFO --autoscale=12,3
 
+  django:
+    <<: *base_app
+    command: /gunicorn.sh
+
   celerybeat:
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./compose/django/Dockerfile
-    user: django
-    env_file: .env
-    depends_on:
-      - postgres
-      - redis
+    <<: *base_app
     command: celery -A mnm.taskapp beat -l INFO
+
+  recorder:
+    <<: *base_app
+    command: python manage.py record_public_timeline
+
+  bot:
+    <<: *base_app
+    command: python manage.py start_bot
 
   nginx:
     restart: unless-stopped

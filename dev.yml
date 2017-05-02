@@ -32,24 +32,9 @@ services:
       - "GF_SECURITY_ADMIN_PASSWORD=secret"
       - "GF_INSTALL_PLUGINS=grafana-piechart-panel,vonage-status-panel,grafana-worldmap-panel"
 
-  django:
-    build:
-      context: .
-      dockerfile: ./compose/django/Dockerfile-dev
-    command: /start-dev.sh
-    env_file: .env
-    depends_on:
-      - postgres
-    environment:
-      - POSTGRES_USER=mnm
-      - USE_DOCKER=yes
-      - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
 
-  celeryworker:
+
+  celeryworker: &base_app
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile-dev
@@ -65,35 +50,16 @@ services:
       - USE_DOCKER=yes
       - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
 
+  django:
+    <<: *base_app
+    command: /start-dev.sh
+    ports:
+      - "8000:8000"
 
   celerybeat:
-    build:
-      context: .
-      dockerfile: ./compose/django/Dockerfile-dev
-    env_file: .env
-    volumes:
-        - .:/app
-    depends_on:
-      - postgres
-      - redis
+    <<: *base_app
     command: celery -A mnm.taskapp beat -l INFO
-    environment:
-      - POSTGRES_USER=mnm
-      - USE_DOCKER=yes
-      - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
 
   bot:
-    build:
-      context: .
-      dockerfile: ./compose/django/Dockerfile-dev
-    env_file: .env
-    volumes:
-        - .:/app
-    depends_on:
-      - postgres
-      - redis
+    <<: *base_app
     command: python manage.py start_bot
-    environment:
-      - POSTGRES_USER=mnm
-      - USE_DOCKER=yes
-      - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test
