@@ -1,22 +1,93 @@
-[
-    {
-        "name":"mastodon.social",
-        "up":true,
-        "https_score":81,
-        "https_rank":"A",
-        "ipv6":false,
-        "openRegistrations":true,
-        "users":330,
-        "statuses":1132540,
-        "connections":827},
-    {
-        "name":"mastodon.xyz",
-        "up":false,
-        "https_score":96,
-        "https_rank":"A+",
-        "ipv6":false,
-        "openRegistrations":false,
-        "users":5627,
-        "statuses":64678,
-        "connections":521}
-]
+{
+    "instances": [
+        {
+            "added_at": null,
+            "checked_at": "2017-11-18T21:27:07.701Z",
+            "connections": 827,
+            "dead": false,
+            "https_rank": "A",
+            "https_score": 81,
+            "id": "58e10e8d72782604c488bd35",
+            "info": {
+                "federates_with": "all",
+                "full_description": "Generalistic and moderated instance. All opinions are welcome, but hate speeches are prohibited.\r\n\r\nUsers who don't respect rules will be silenced, or suspended if they harass other people or if the the violation is considered too large.",
+                "languages": [
+                    "en",
+                    "fr"
+                ],
+                "other_languages_accepted": true,
+                "prohibited_content": [
+                    "nudity_nocw",
+                    "pornography_nocw",
+                    "sexism",
+                    "racism",
+                    "illegalContentLinks",
+                    "spam",
+                    "hateSpeeches",
+                    "harrassment"
+                ],
+                "short_description": "Generalistic and moderated instance. All opinions are welcome, but hate speeches are prohibited.",
+                "topic": null
+            },
+            "ipv6": false,
+            "name": "mastodon.social",
+            "obs_rank": "A+",
+            "obs_score": 110,
+            "open_registrations": true,
+            "statuses": 1132540,
+            "thumbnail": null,
+            "up": true,
+            "updated_at": "2017-11-18T20:47:32.619Z",
+            "uptime": 0.993907731449887,
+            "users": 330,
+            "version": "2.0.0"
+        },
+        {
+            "added_at": null,
+            "checked_at": "2017-11-18T21:27:13.853Z",
+            "connections": 521,
+            "dead": false,
+            "https_rank": "A+",
+            "https_score": 96,
+            "id": "58e113f311c1a56b775b3933",
+            "info": {
+                "federates_with": "some",
+                "full_description": "This space left blank for now",
+                "languages": [
+                    "en"
+                ],
+                "other_languages_accepted": true,
+                "prohibited_content": [
+                    "nudity_nocw",
+                    "pornography_nocw",
+                    "sexism",
+                    "racism",
+                    "illegalContentLinks",
+                    "spam",
+                    "advertising",
+                    "hateSpeeches",
+                    "harrassment",
+                    "spoilers_nocw"
+                ],
+                "short_description": "Awoo.space is a smaller community that believes in diplomatic moderation to help limit harm and encourage growth.",
+                "topic": null
+            },
+            "ipv6": false,
+            "name": "mastodon.xyz",
+            "obs_rank": "A+",
+            "obs_score": 100,
+            "open_registrations": false,
+            "statuses": 64678,
+            "thumbnail": null,
+            "up": false,
+            "updated_at": "2017-11-18T21:26:59.019Z",
+            "uptime": 0.992489721818236,
+            "users": 5627,
+            "version": "2.0.0"
+        }
+    ],
+    "pagination": {
+        "next_id": "58e1331624a67c3363064416",
+        "total": 1198
+    }
+}

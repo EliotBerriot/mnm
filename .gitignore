@@ -68,3 +68,4 @@ staticfiles/
 # access tokens
 mnm.txt
 mnm_user.txt
+celerybeat-schedule

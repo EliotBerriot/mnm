@@ -26,8 +26,8 @@ def grouper(n, iterable):
 
 
 @celery.app.task(bind=True)
-def fetch_from_instances_xyz(self):
-    results = parsers.parser_instances_xyz()
+def fetch_from_instances_social(self):
+    results = parsers.parser_instances_social()
     parsers.import_results(results['instances'])
 
 

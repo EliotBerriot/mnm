@@ -32,8 +32,6 @@ services:
       - "GF_SECURITY_ADMIN_PASSWORD=secret"
       - "GF_INSTALL_PLUGINS=grafana-piechart-panel,vonage-status-panel,grafana-worldmap-panel"
 
-
-
   celeryworker: &base_app
     build:
       context: .
@@ -46,6 +44,7 @@ services:
     command: celery -A mnm.taskapp worker -l DEBUG -Q crawl,messaging,statuses,celery,default
     env_file: .env
     environment:
+      - DJANGO_ALLOWED_HOSTS=localhost,0.0.0.0
       - POSTGRES_USER=mnm
       - USE_DOCKER=yes
       - INFLUXDB_URL=influxdb://root:root@influxdb:8086/test

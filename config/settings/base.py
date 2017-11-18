@@ -121,7 +121,7 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///mnm'),
+    'default': env.db('DATABASE_URL', default='postgres://mnm@postgres/mnm'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -223,6 +223,12 @@ ROOT_URLCONF = 'config.urls'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
 WSGI_APPLICATION = 'config.wsgi.application'
+# SITE CONFIGURATION
+# ------------------------------------------------------------------------------
+# Hosts/domain names that are valid for this site
+# See https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['mnm.social', ])
+# END SITE CONFIGURATION
 
 # PASSWORD STORAGE SETTINGS
 # ------------------------------------------------------------------------------
@@ -295,6 +301,7 @@ else:
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
 
+INSTANCES_SOCIAL_API_TOKEN = env("INSTANCES_SOCIAL_API_TOKEN")
 INFLUXDB_URL = env("INFLUXDB_URL", default=None)
 INFLUXDB_UDP_PORT = env.int("INFLUXDB_UDP_PORT", default=None)
 FETCH_DELAY = env.int('FETCH_DELAY', default=300)
@@ -310,8 +317,8 @@ CELERY_ROUTES = {
 
 CELERYBEAT_SCHEDULE = {
     # crontab(hour=0, minute=0, day_of_week='saturday')
-    'fetch_from_instances_xyz': {
-        'task': 'mnm.instances.tasks.fetch_from_instances_xyz',
+    'fetch_from_instances_social': {
+        'task': 'mnm.instances.tasks.fetch_from_instances_social',
         'schedule': crontab(minute='*/5'),
         'options': {
             'expires': 300,
