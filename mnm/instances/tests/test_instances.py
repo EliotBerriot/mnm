@@ -38,7 +38,7 @@ class TestInstances(TestCase):
         with open(html) as f:
             content = f.read()
 
-        m.get('https://instances.social/api/1.0/instances/list?count=10000', text=content)
+        m.get('https://instances.social/api/1.0/instances/list?count=0', text=content)
         results = parsers.parser_instances_social()
 
         self.assertEqual(len(results['instances']), 2)
@@ -71,7 +71,7 @@ class TestInstances(TestCase):
         with open(html) as f:
             content = f.read()
         now = timezone.now()
-        m.get('https://instances.social/api/1.0/instances/list?count=10000', text=content)
+        m.get('https://instances.social/api/1.0/instances/list?count=0', text=content)
         with unittest.mock.patch('django.utils.timezone.now', return_value=now):
             results = parsers.parser_instances_social()
 

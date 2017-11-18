@@ -9,7 +9,7 @@ from . import models
 def parser_instances_social():
     url = 'https://instances.social/api/1.0/instances/list'
     headers = {'Authorization': 'Bearer {}'.format(settings.INSTANCES_SOCIAL_API_TOKEN)}
-    response = requests.get(url, params={'count': 10000}, headers=headers)
+    response = requests.get(url, params={'count': 0}, headers=headers)
     response.raise_for_status()
     payload = json.loads(response.content.decode('utf-8'))
     now = timezone.now()
