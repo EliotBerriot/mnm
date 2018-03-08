@@ -41,6 +41,12 @@ class Instance(models.Model):
 
     release = models.ForeignKey(
         'releases.Release', null=True, blank=True, related_name='instances')
+
+    # activity stats
+    last_week_statuses = models.PositiveIntegerField(null=True, blank=True)
+    last_week_logins = models.PositiveIntegerField(null=True, blank=True)
+    last_week_registrations = models.PositiveIntegerField(
+        null=True, blank=True)
     objects = InstanceQuerySet.as_manager()
 
     @property
