@@ -10,6 +10,5 @@ factory-boy==2.8.1
 
 # pytest
 pytest-django==3.1.2
-pytest-sugar==0.8.0
 
 requests-mock
