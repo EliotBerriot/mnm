@@ -80,10 +80,10 @@ class Instance(models.Model):
     def to_influxdb(self, table='instances', time=None):
         if not time:
             try:
-                time = self.last_fetched
+                time = self.last_fetchede
             except AttributeError:
                 time = timezone.now()
-        return {
+        d = {
             "measurement": table,
             "time": time.isoformat(),
             "tags": {
@@ -109,3 +109,10 @@ class Instance(models.Model):
                 'connections': self.connections,
             },
         }
+        for activity in ['registrations', 'statuses', 'logins']:
+            key = 'last_week_{}'.format(activity)
+            v = getattr(self, key)
+            if v is not None:
+                d['fields'][key] = v
+
+        return d

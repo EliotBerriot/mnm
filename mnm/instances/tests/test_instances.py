@@ -174,6 +174,9 @@ class TestInstances(TestCase):
             ipv6=False,
             open_registrations=True,
             users=330,
+            last_week_statuses=1,
+            last_week_registrations=2,
+            last_week_logins=3,
             country_code='FR',
             region_code='PA',
             region='Europe',
@@ -191,6 +194,9 @@ class TestInstances(TestCase):
                 'statuses': 1132540,
                 'connections': 827,
                 '_quantity': 1,
+                'last_week_statuses': 1,
+                'last_week_registrations': 2,
+                'last_week_logins': 3,
             },
             'tags': {
                 'geohash': None,
@@ -212,23 +218,6 @@ class TestInstances(TestCase):
         existing.push_to_influxdb()
 
         m.assert_called_once_with([expected])
-
-    @requests_mock.mock()
-    def test_can_fetch_instance_country(self, m):
-        html = os.path.join(DATA_DIR, 'freegeoip.json')
-        with open(html) as f:
-            content = f.read()
-
-        hostname = 'mastodon.xyz'
-        url = 'https://freegeoip.net/json/{}'.format(hostname)
-        m.get(url, text=content)
-
-        results = countries.fetch_country('mastodon.xyz')
-        self.assertEqual(results['country_code'], 'FR')
-        self.assertEqual(results['country_name'], 'France')
-        self.assertEqual(results['time_zone'], 'Europe/Paris')
-        self.assertEqual(results['latitude'], 48.8582)
-        self.assertEqual(results['longitude'], 2.3387)
 
     @requests_mock.mock()
     def test_can_fetch_instance_country(self, m):
