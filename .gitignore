@@ -69,3 +69,4 @@ staticfiles/
 mnm.txt
 mnm_user.txt
 celerybeat-schedule
+.pytest_cache
