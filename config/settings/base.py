@@ -332,12 +332,11 @@ CELERYBEAT_SCHEDULE = {
             'expires': 60 * 30,
         },
     },
-    'fetch_instances_5m': {
-        'task': 'mnm.instances.tasks.fetch_instances',
-        'schedule': crontab(minute='*/5'),
-        'args': ('instances',),
+    'update_instances_activity': {
+        'task': 'mnm.instances.tasks.update_instances_activity',
+        'schedule': crontab(minute='*/60'),
         'options': {
-            'expires': 300,
+            'expires': 60 * 30,
         },
     },
     'fetch_releases': {
@@ -361,6 +360,14 @@ CELERYBEAT_SCHEDULE = {
         'args': ('instances_daily',),
         'options': {
             'expires': 3600 * 24,
+        },
+    },
+    'fetch_instances_7d': {
+        'task': 'mnm.instances.tasks.fetch_instances',
+        'schedule': crontab(minute=0, hour=0, day_of_week='monday'),
+        'args': ('instances_weekly',),
+        'options': {
+            'expires': 3600 * 24 * 7,
         },
     },
     'fetch_instances_countries_empty': {

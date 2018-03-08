@@ -8,7 +8,7 @@ _client = None
 def get_client():
     global _client
     if not _client:
-        _client = influxdb.InfluxDBClient.from_DSN(
+        _client = influxdb.InfluxDBClient.from_dsn(
             settings.INFLUXDB_URL,
             udp_port=settings.INFLUXDB_UDP_PORT,
             timeout=5)

@@ -41,6 +41,12 @@ class Instance(models.Model):
 
     release = models.ForeignKey(
         'releases.Release', null=True, blank=True, related_name='instances')
+
+    # activity stats
+    last_week_statuses = models.PositiveIntegerField(null=True, blank=True)
+    last_week_logins = models.PositiveIntegerField(null=True, blank=True)
+    last_week_registrations = models.PositiveIntegerField(
+        null=True, blank=True)
     objects = InstanceQuerySet.as_manager()
 
     @property
@@ -74,10 +80,10 @@ class Instance(models.Model):
     def to_influxdb(self, table='instances', time=None):
         if not time:
             try:
-                time = self.last_fetched
+                time = self.last_fetchede
             except AttributeError:
                 time = timezone.now()
-        return {
+        d = {
             "measurement": table,
             "time": time.isoformat(),
             "tags": {
@@ -103,3 +109,10 @@ class Instance(models.Model):
                 'connections': self.connections,
             },
         }
+        for activity in ['registrations', 'statuses', 'logins']:
+            key = 'last_week_{}'.format(activity)
+            v = getattr(self, key)
+            if v is not None:
+                d['fields'][key] = v
+
+        return d

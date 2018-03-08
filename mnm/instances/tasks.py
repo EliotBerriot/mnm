@@ -73,12 +73,12 @@ def fetch_instances_countries(self, maximum=10, empty=True):
 
 @celery.app.task(bind=True)
 def fetch_instances_info(self, maximum=30):
-    qs = models.Instance.objects.all().order_by('?')
+    qs = models.Instance.objects.all().order_by('?').filter(up=True)
     if maximum:
         qs = qs[:maximum]
 
     for instance in qs:
-        fetch_instance_info.apply_async(args=(instance.pk,), expires=600)
+        fetch_instance_info.apply_async(args=(instance.pk,), expires=600, timeout=5)
 
 
 @celery.app.task(bind=True)
@@ -99,3 +99,39 @@ def fetch_instance_info(self, instance_pk):
         pass
 
     return payload
+
+
+def _fetch_instance_activity(instance):
+    url = instance.url + '/api/v1/instance/activity'
+    response = requests.get(url, verify=False, allow_redirects=True, timeout=5)
+
+    if response.status_code != 200:
+        return
+
+    return response.json()
+
+
+@celery.app.task()
+def update_instance_activity(instance_pk):
+    instance = models.Instance.objects.get(pk=instance_pk)
+    data = _fetch_instance_activity(instance)
+    print('updating activity for', instance.url)
+    if not data:
+        return
+
+    last_week = data[0]
+    instance.last_week_statuses = int(last_week['statuses'])
+    instance.last_week_registrations = int(last_week['registrations'])
+    instance.last_week_logins = int(last_week['logins'])
+    instance.save()
+    return True
+
+
+@celery.app.task(bind=True)
+def update_instances_activity(self, maximum=100):
+    qs = models.Instance.objects.all().order_by('?').filter(up=True)
+    if maximum:
+        qs = qs[:maximum]
+
+    for instance in qs:
+        update_instance_activity.apply_async(args=(instance.pk,), expires=600)
