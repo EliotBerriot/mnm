@@ -55,7 +55,8 @@ def fetch_host_geo_data(hostname):
 
 @celery.app.task(bind=True)
 def fetch_instances_countries(self, maximum=10, empty=True):
-    qs = models.Instance.objects.filter(country_code__isnull=empty)
+    qs = models.Instance.objects.filter(
+        country_code__isnull=empty, is_blocked=False)
 
     for instance in qs.order_by('?')[:maximum]:
         logger.info('Fetching geo data for {}...'.format(instance.name))
@@ -73,7 +74,8 @@ def fetch_instances_countries(self, maximum=10, empty=True):
 
 @celery.app.task(bind=True)
 def fetch_instances_info(self, maximum=30):
-    qs = models.Instance.objects.all().order_by('?').filter(up=True)
+    qs = models.Instance.objects.all().order_by('?').filter(
+        up=True, is_blocked=False)
     if maximum:
         qs = qs[:maximum]
 
@@ -83,7 +85,7 @@ def fetch_instances_info(self, maximum=30):
 
 @celery.app.task(bind=True)
 def fetch_instance_info(self, instance_pk):
-    instance = models.Instance.objects.get(pk=instance_pk)
+    instance = models.Instance.objects.get(pk=instance_pk, is_blocked=False)
     response = requests.get(
         instance.get_info_api_url(),
         verify=False,
@@ -113,7 +115,7 @@ def _fetch_instance_activity(instance):
 
 @celery.app.task()
 def update_instance_activity(instance_pk):
-    instance = models.Instance.objects.get(pk=instance_pk)
+    instance = models.Instance.objects.get(pk=instance_pk, is_blocked=False)
     data = _fetch_instance_activity(instance)
     print('updating activity for', instance.url)
     if not data:
@@ -129,7 +131,8 @@ def update_instance_activity(instance_pk):
 
 @celery.app.task(bind=True)
 def update_instances_activity(self, maximum=100):
-    qs = models.Instance.objects.all().order_by('?').filter(up=True)
+    qs = models.Instance.objects.all().order_by('?').filter(
+        up=True, is_blocked=False)
     if maximum:
         qs = qs[:maximum]
 
