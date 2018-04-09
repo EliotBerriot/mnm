@@ -19,7 +19,7 @@ def parser_instances_social():
     }
     for row in payload['instances']:
         d = {
-            'name': row['name'],
+            'name': row['name'].lower(),
             'up': row['up'],
             'https_score': row['https_score'],
             'https_rank': row['https_rank'],
