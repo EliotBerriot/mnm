@@ -1,6 +1,11 @@
 Schema
 ======
 
+.. warning::
+
+    This data is provided and maintained on a best effort basis. Bugs and errors can happen, and you should always compare with other datasources such as http://sp3r4z.fr/mastodon/ or https://instances.social/.
+    
+
 - The postgresql database stores instance information in a ``instances_table`` table. This is the data you can see here: https://mnm.social/. The model code matching this table may be found here: https://github.com/EliotBerriot/mnm/blob/master/mnm/instances/models.py#L17
 - Every day, for each instance, we fetch latest data, update this table, and sends a copy of the information to an InfluxDB database. This one is responsible to store historical data and enable the visualizations you can see in https://dashboards.mnm.social/
 
