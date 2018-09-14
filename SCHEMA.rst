@@ -49,7 +49,7 @@ Then you can run queries on this database:
     use mnm;
     SHOW MEASUREMENTS;
     # hourly evolution of statuses on instance pawoo.net
-    SELECT mean("statuses") FROM "instances_daily" WHERE ("name" = 'pawoo.net') AND time >= now() - 7d GROUP BY time(1h) fill(null);
+    SELECT mean("statuses") FROM "instances_hourly" WHERE ("name" = 'pawoo.net') AND time >= now() - 7d GROUP BY time(1h) fill(null);
     # daily evolution of users on the whole network
     SELECT sum("users") FROM "instances_daily" WHERE time >= now() - 60d GROUP BY time(1d) fill(null);
 
