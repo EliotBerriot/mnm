@@ -55,4 +55,7 @@ Then you can run queries on this database:
 
 Refer to https://docs.influxdata.com/influxdb/v1.5/query_language/data_exploration/ and https://docs.influxdata.com/influxdb/v1.5/query_language/schema_exploration/ for details about Influx query language.
 
+Since our grafana dashboards (https://dashboards.mnm.social/) talk directly do influxdb, you can also have a look at the query sent by your browser on any given dashboard and use them to get inspiration.
+
+
 This is the data we send to influxdfb: https://github.com/EliotBerriot/mnm/blob/master/mnm/instances/models.py#L86
